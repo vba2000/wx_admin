@@ -1,10 +1,10 @@
 import {Alert, Button, Col, Modal, Form, FormGroup, Row} from "react-bootstrap";
 import {useCallback, useContext, useMemo, useState} from "react";
-import {OnOffSm} from "../../components/OnOff";
-import {InputWithDecimals} from "../../components/InputWithDecimals";
+import {OnOffSm} from "../../../components/OnOff";
+import {InputWithDecimals} from "../../../components/InputWithDecimals";
 import {SavePoolDataModal} from "./SavePoolDataModal";
-import {statusToText} from "../../services";
-import {DataContext} from "../../context/Data";
+import {statusToText} from "../../../services";
+import {DataContext} from "../../../context/Data";
 
 
 const selectClassName = (status) => {

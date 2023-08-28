@@ -1,4 +1,5 @@
 import {createContext, useCallback, useState} from 'react';
+import {checkNodeNetworkByte} from "../services";
 
 
 class WavesKeeper {
@@ -10,10 +11,11 @@ class WavesKeeper {
         try {
             const state = await window.KeeperWallet.publicState();
             this.user = state.account.address;
+            await checkNodeNetworkByte(this.user);
             this.keeperState = state;
             this.isLogin = true;
         } catch (e) {
-            throw(new Error('Install Keeper'));
+            throw(new Error(e));
         }
     }
 

@@ -1,6 +1,6 @@
 import {Col, Form, Row} from "react-bootstrap";
 import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {DataContext} from "../../context/Data";
+import {DataContext} from "../../../context/Data";
 
 
 export const PoolListFilters = ({setPoolList, ...props}) => {

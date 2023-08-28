@@ -1,5 +1,36 @@
-const node = 'https://nodes.waves.exchange/';
-const factory = '3PCuHsTU58WKhCqotbcSwABvdPzqqVAbbTv';
+import {libs} from '@waves/waves-transactions';
+
+const MAINNET = {node: 'https://nodes.waves.exchange/', factory: '3PCuHsTU58WKhCqotbcSwABvdPzqqVAbbTv', byte: 'W'};
+const TESTNET = {
+    node: 'https://nodes-testnet.waves.exchange/',
+    factory: '3MsMP2pb2p8MDd6Rxb7XEXqqwEhE8ATfyai',
+    byte: 'T'
+};
+
+let {node, factory, byte} = MAINNET;
+
+export const setTestnet = () => {
+    node = TESTNET.factory;
+    factory = TESTNET.factory;
+    byte = TESTNET.byte;
+};
+
+export const setMainnet = () => {
+    node = MAINNET.factory;
+    factory = MAINNET.factory;
+    byte = MAINNET.byte;
+};
+
+export const checkNodeNetworkByte = async (user) => {
+    // const { generator } =  await fetch(`${node}blocks/headers/last`).then(r => r.json());
+    const current = String.fromCharCode(libs.crypto.base58Decode(user)[1]);
+    if (current !== byte) {
+        throw `Incorrect network for user ${user}!`;
+    }
+};
+
+
+const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
 
 const assetsStore = {'WAVES': {ticker: 'WAVES', decimals: 8}};
 const getDataState = async (address) => {
@@ -8,6 +39,30 @@ const getDataState = async (address) => {
     return data;
 };
 
+
+const getAdminsData = async (managerContract) => {
+    const dataState = await getDataState(managerContract);
+    const adminData = dataState.reduce((acc, {key, value}) => {
+
+        switch (true) {
+            case key.includes('%s__adminAddressList'):
+                acc.admins = value.split('__');
+                break;
+            case key.includes('%s__currentManagerPublicKey'):
+                acc.managerPublicKey = value;
+                acc.manager = pubKeyToAddress(value);
+            case key.includes('%s__managerPublicKey'):
+                acc.mangerInVotePublicKey = value;
+                acc.mangerInVote = pubKeyToAddress(value);
+                break;
+            default:
+        }
+
+        return acc;
+    }, {});
+
+    return adminData;
+}
 const getAssets = async (ids) => {
     const idsToFetch = ids.filter((id) => !assetsStore[id]);
     while (true) {
@@ -103,6 +158,7 @@ export const getPoolsData = async () => {
     const dataState = await getDataState(factory);
     const {poolsData, globalSettings} = parsePools(dataState);
     const assetsState = await getDataState(globalSettings.assetStore);
+    const adminData = await getAdminsData(globalSettings.managerContract);
     const assetStore = parseAssetStore(assetsState);
 
     const missTickers = Object.entries(assetStore).reduce((acc, [id]) => {
@@ -119,7 +175,7 @@ export const getPoolsData = async () => {
         assetStore[asset.assetId].id = asset.assetId;
     })
 
-    return {poolsData, assetStore, globalSettings};
+    return {poolsData, assetStore, globalSettings: {...globalSettings, ...adminData}};
 };
 
 export const statusToText = (status) => {
@@ -177,7 +233,13 @@ const parsePools = (factoryDataState) => {
     const idToPool = {};
     const swapDisabled = {};
     const oneTokenDisabled = {};
-    const globalSettings = {matcherSwapFee: 200000, poolSwapFee: 200000, swapFee: 400000, factoryContract: factory};
+    const globalSettings = {
+        matcherSwapFee: 200000,
+        poolSwapFee: 200000,
+        swapFee: 400000,
+        factoryContract: factory,
+        spread: 200000
+    };
     const notUsed = [];
     const wxEmission = {};
     factoryDataState.forEach(dataStatePair => {
@@ -255,7 +317,7 @@ const parsePools = (factoryDataState) => {
                 globalSettings.feeCollector = value;
                 break;
             case key === '%s__managerVaultAddress':
-                globalSettings.manager = value;
+                globalSettings.managerContract = value;
                 break;
             case key.includes('mappings'):
                 break;

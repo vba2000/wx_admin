@@ -5,7 +5,7 @@ import {broadcast, getPoolsData} from "../services";
 
 export const useDataForRoot = () => {
 
-    const [pools, setPools] = useState([]);
+    const [pools, setPools] = useState({});
     const [globalPoolsSettings, setGlobalsPoolsSettings] = useState({});
     const [assets, setAssets] = useState({});
     const [isLoadingData, setLoadingData] = useState(false);
@@ -23,6 +23,7 @@ export const useDataForRoot = () => {
                     setLoadingData(false);
                     return null;
                 }
+
                 setPools(poolsData);
                 setAssets(assetStore);
                 setGlobalsPoolsSettings(globalSettings);
@@ -40,9 +41,15 @@ export const useDataForRoot = () => {
         return  () => stopFetched = true;
     }, [setPools, setGlobalsPoolsSettings, setAssets, setLoadingData, setHasError, setHasData]);
 
+    const updatePool = useCallback((poolAddress, data) => {
+        const newPools = { ...pools, [poolAddress]: { ...(pools[poolAddress] || {}), ...(data || {}) } }
+        setPools(newPools);
+    }, [setPools, hasData, pools])
+
+
     const api = useMemo(() => {
-        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData };
-    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, broadcast, hasData])
+        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool };
+    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, broadcast, hasData, updatePool])
     return api;
 };
 

@@ -1,14 +1,14 @@
 import {Alert, Button, Col, Modal, ProgressBar, Row} from "react-bootstrap";
 import {useCallback, useContext, useMemo, useState} from "react";
-import {UserContext} from "../../context/WavesKeeper";
+import {UserContext} from "../../../context/WavesKeeper";
 import {
     broadcast, broadcastAndWaitTxs,
     setFactoryDataTransaction,
     setPoolStatusTx,
     setPoolWxEmissionsTx,
     statusToText
-} from "../../services";
-import {DataContext} from "../../context/Data";
+} from "../../../services";
+import {DataContext} from "../../../context/Data";
 
 
 const DiffView = ({label, value, realValue, ...props}) => {
@@ -67,7 +67,7 @@ const ShowDiff = ({data}) => {
 
 export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) => {
 
-    const { fetchData, globalPoolsSettings } = useContext(DataContext);
+    const { globalPoolsSettings, updatePool, pools } = useContext(DataContext);
 
     const {signTransactionsPackage, txLoading, isLogin, hasError} = useContext(UserContext);
     const btnIsDisable = useMemo(() => !isLogin, [isLogin]);
@@ -93,15 +93,15 @@ export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) =>
                 return broadcastAndWaitTxs(signedTxs, setProgress)
                     .then(() => {
                         setProgress(null);
+                        updatePool({ ...data });
                         hideModal();
-                        fetchData();
                     })
                     .catch(e => {
                         setProgress(null);
                         setSendError(e);
                     });
             });
-    }, [data, pool, fetchData, setSendError]);
+    }, [data, pool, updatePool, setSendError]);
 
     return <Modal show={isShow}
                   backdrop="static"

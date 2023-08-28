@@ -2,8 +2,8 @@ import {Container} from "react-bootstrap";
 import {useContext, useEffect} from "react";
 import {Loader} from "./Loader";
 import {LoadingError} from "./LoadingError";
-import {GeneralSettings} from "./GeneralSettings";
-import {PoolList} from "./PoolList";
+import {GeneralSettings} from "./GeneraSettings/GeneralSettings";
+import {PoolList} from "./PoolList/PoolList";
 import {DataContext} from "../../context/Data";
 const Pools = () => {
 

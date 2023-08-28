@@ -1,14 +1,14 @@
 import {Accordion, Col, Row} from "react-bootstrap";
-import {IconLogo} from "../../components/SvgString";
+import {IconLogo} from "../../../components/SvgString";
 import {useContext} from "react";
-import {DataContext} from "../../context/Data";
+import {DataContext} from "../../../context/Data";
 
 
 const boolToString = (isActive) => isActive ? <small className="text-bg-success rounded px-2">Enable</small> :
     <small className="text-bg-danger rounded px-2">Disable</small>;
 const poolStatus = (address, status, poolName) => {
 
-    const statusStr = status === 1 ? 'Active' : status === 2 ? 'Disabled put tokens' : status === 3 ? 'Disabled put tokens and bot trade' : 'Disabled pool';
+    const statusStr = status === 1 ? 'Active' : status === 2 ? 'Disabled put tokens' : status === 3 ? 'Disabled put tokens & bot trade' : 'Disabled pool';
     const textColorClass = status === 1 ? 'text-bg-success' : status === 2 ? 'text-bg-warning' : status === 3 ? 'text-bg-danger' : 'text-bg-secondary';
 
     return <Col style={{minWidth: "350px"}} className="text-center">
@@ -41,8 +41,8 @@ export const PoolHeader = ({poolData, ...props}) => {
     const swap = !swapDisable;
     const oneTkn = !oneTokenDisable;
     const poolSwapFeeFull = swapFee || globalPoolsSettings.swapFee;
-    const amountName = assets[amountAssetId].ticker;
-    const priceName = assets[priceAssetId].ticker;
+    const amountName = assets[amountAssetId]?.ticker;
+    const priceName = assets[priceAssetId]?.ticker;
     const poolName = `${amountName || 'no name'}/${priceName || 'no'}`
 
 
@@ -80,7 +80,7 @@ export const PoolHeader = ({poolData, ...props}) => {
             </Col>
             <Col>
                 <Row><small className="label label-primary text-nowrap">Spread</small></Row>
-                <Row><small className="text-muted">{spread / 10 ** 6}%</small></Row>
+                <Row><small className="text-muted">{((spread || globalPoolsSettings.spread)/ 10 ** 6) || 2}%</small></Row>
             </Col>
             <Col>
                 <Row><small className="label label-primary text-nowrap">Internal Id</small></Row>
