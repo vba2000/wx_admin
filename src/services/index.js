@@ -2,7 +2,7 @@ import {libs} from '@waves/waves-transactions';
 
 const MAINNET = {node: 'https://nodes.waves.exchange/', factory: '3PCuHsTU58WKhCqotbcSwABvdPzqqVAbbTv', byte: 'W'};
 const TESTNET = {
-    node: 'https://nodes-testnet.waves.exchange/',
+    node: 'https://nodes-testnet.wavesnodes.com/',
     factory: '3MsMP2pb2p8MDd6Rxb7XEXqqwEhE8ATfyai',
     byte: 'T'
 };
