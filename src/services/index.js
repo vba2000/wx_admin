@@ -7,18 +7,21 @@ const TESTNET = {
     byte: 'T'
 };
 
+export let net = 'mainnet';
 let {node, factory, byte} = MAINNET;
 
 export const setTestnet = () => {
     node = TESTNET.node;
     factory = TESTNET.factory;
     byte = TESTNET.byte;
+    net = 'testnet';
 };
 
 export const setMainnet = () => {
     node = MAINNET.node;
     factory = MAINNET.factory;
     byte = MAINNET.byte;
+    net = 'mainnet';
 };
 
 export const checkNodeNetworkByte = async (user) => {

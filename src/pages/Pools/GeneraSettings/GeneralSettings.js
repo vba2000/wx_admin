@@ -13,6 +13,11 @@ export const GeneralSettings = (params) => {
     const {inFee, outFee, swapFee, spread} = globalPoolsSettings;
     const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
     const { oneTokenDisable, shutdown } = globalPoolsSettings;
+    const onUpdate = useCallback((e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        fetchData();
+    }, [fetchData]);
 
     if (isLoadingData || hasError || !hasData) {
         return null;
@@ -33,9 +38,9 @@ export const GeneralSettings = (params) => {
                     <StringStatCom xxl={1} md={2} sm={3} value={`${outFee / 10 ** 6}%`} valueName="Default Fee Out"/>
                     <StringStatCom xxl={1} md={2} sm={3} value={`${swapFee / 10 ** 6}%`} valueName="Default Swap fee"/>
                     <StringStatCom xxl={1} md={2} sm={3} value={`${spread / 10 ** 6}%`} valueName="Default Spread"/>
-                    <Col xxl={1} md={1} sm={1} className={""}>
+                    <Col xxl={1} md={1} sm={1} className={""} hidden={!isManger}>
                         <Button className="bi bi-arrow-clockwise m-1" variant="outline-warning" size="sm"
-                                onClick={fetchData}
+                                onClick={onUpdate}
                                 title={"Update data"}/>
                     </Col>
                 </Row>

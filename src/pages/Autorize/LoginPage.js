@@ -1,31 +1,28 @@
 import {Alert, Tab, Tabs, Container, Button, Row, Col} from "react-bootstrap";
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useState} from "react";
 import {UserContext} from "../../context/WavesKeeper";
-import {setMainnet, setTestnet} from "../../services";
-import {useDataForRoot} from "../../context/Data";
+import {DataContext} from "../../context/Data";
 
 
 export const LoginPage = () => {
     const [error, setError] = useState('');
     const {login} = useContext(UserContext);
+    const {network, changeNetwork, fetchData} = useContext(DataContext);
     const onSelect = useCallback((event) => {
-        if (event === 'testnet') {
-            setTestnet();
-        } else {
-            setMainnet();
-        }
-    }, []);
+        changeNetwork(event);
+    }, [changeNetwork]);
 
     const onLogin = useCallback(() => {
-        login().catch((e) => {
+        login().then(fetchData).catch((e) => {
             setError(e.toString());
         });
-    }, [login]);
+    }, [login, fetchData]);
 
     const onLoginGuest = useCallback(() => {
         setError('');
-        login(true);
-    }, [login]);
+        login(true).then(fetchData);
+    }, [login, fetchData]);
+
 
     return <Container className={""}>
         <Alert variant="secondary" className={"m-sm-5 p-sm-5"}>
@@ -38,6 +35,7 @@ export const LoginPage = () => {
                     defaultActiveKey="mainnet"
                     className="mb-1"
                     variant={"pills"}
+                    activeKey={network}
                 >
                     <Tab eventKey="mainnet" title="Mainnet">
                     </Tab>

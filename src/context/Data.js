@@ -1,5 +1,5 @@
 import {createContext, useCallback, useMemo, useState} from 'react';
-import {broadcast, getPoolsData} from "../services";
+import {broadcast, getPoolsData, setMainnet, setTestnet} from "../services";
 
 
 
@@ -11,11 +11,13 @@ export const useDataForRoot = () => {
     const [isLoadingData, setLoadingData] = useState(false);
     const [hasError, setHasError] = useState(false);
     const [hasData, setHasData] = useState(false);
+    const [network, setNetwork] = useState('mainnet');
 
     const fetchData = useCallback( () => {
         let stopFetched = false;
         setHasError(false);
         setLoadingData(true);
+
         const fetchData = async () => {
             try {
                 const {globalSettings, poolsData, assetStore} = await getPoolsData();
@@ -46,10 +48,24 @@ export const useDataForRoot = () => {
         setPools(newPools);
     }, [setPools, hasData, pools])
 
+    const changeNetwork = useCallback((network) => {
+        if (network === 'testnet') {
+            setTestnet();
+        } else {
+            setMainnet();
+        }
+        setNetwork(network);
+        setPools({});
+        setHasData(false);
+        setAssets({});
+        setGlobalsPoolsSettings({});
+        setHasError(false);
+        setLoadingData(false);
+    }, [setNetwork, setPools, setHasData, setAssets, setGlobalsPoolsSettings, setHasError, setLoadingData]);
 
     const api = useMemo(() => {
-        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool };
-    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, broadcast, hasData, updatePool])
+        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool, network, changeNetwork };
+    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, broadcast, hasData, updatePool, network, changeNetwork])
     return api;
 };
 
