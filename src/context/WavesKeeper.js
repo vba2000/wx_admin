@@ -45,13 +45,13 @@ export const useUserForRoot = () => {
     const [isLogin, setIsLogin] = useState(false);
     const [hasError, setError] = useState(null);
     const login = useCallback((data) => {
-        keeper.login(data).then(() => {
+        return keeper.login(data).then(() => {
             setUser(keeper.user);
             setIsLogin(true);
         });
     }, [keeper]);
     const logout = useCallback(() => {
-        keeper.logout().then(() => {
+        return keeper.logout().then(() => {
             setUser(keeper.user);
             setIsLogin(false);
         });

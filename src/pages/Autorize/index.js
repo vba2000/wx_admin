@@ -5,7 +5,7 @@ import {LoginPage} from "./LoginPage";
 
 
 export const Autorize = ({ children, ...props }) => {
-    const {login, logout, user, isLogin} = useContext(UserContext);
+    const {isLogin} = useContext(UserContext);
 
     return <>
         { isLogin ? {...children} : <LoginPage/> }

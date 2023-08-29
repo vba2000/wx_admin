@@ -10,13 +10,13 @@ const TESTNET = {
 let {node, factory, byte} = MAINNET;
 
 export const setTestnet = () => {
-    node = TESTNET.factory;
+    node = TESTNET.node;
     factory = TESTNET.factory;
     byte = TESTNET.byte;
 };
 
 export const setMainnet = () => {
-    node = MAINNET.factory;
+    node = MAINNET.node;
     factory = MAINNET.factory;
     byte = MAINNET.byte;
 };
@@ -318,6 +318,9 @@ const parsePools = (factoryDataState) => {
                 break;
             case key === '%s__managerVaultAddress':
                 globalSettings.managerContract = value;
+                break;
+            case key === '%s__shutdown':
+                globalSettings.shutdown = value;
                 break;
             case key.includes('mappings'):
                 break;

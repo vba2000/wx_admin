@@ -12,7 +12,7 @@ export const GeneralSettings = (params) => {
     const {fetchData, globalPoolsSettings, isLoadingData, hasError, hasData} = useContext(DataContext);
     const {inFee, outFee, swapFee, spread} = globalPoolsSettings;
     const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
-
+    const { oneTokenDisable, shutdown } = globalPoolsSettings;
 
     if (isLoadingData || hasError || !hasData) {
         return null;
@@ -23,11 +23,11 @@ export const GeneralSettings = (params) => {
             <Accordion.Button disabled={!isManger} variant={"danger"}>
                 <Row className="w-100">
                     <Col xxl={1} md={2} sm={4}>
-                        <h4>Settings</h4>
+                        <h5>Main settings</h5>
                     </Col>
-                    <BoolStatCom xxl={1} md={2} sm={3} value={true} valueName="Disable pools"
+                    <BoolStatCom xxl={1} md={2} sm={3} value={!shutdown} valueName="Pools"
                                  title="Stop all pools operation"/>
-                    <BoolStatCom xxl={1} md={2} sm={3} value={false} valueName="Stop one tkn"
+                    <BoolStatCom xxl={1} md={2} sm={3} value={!oneTokenDisable} valueName="One tkn"
                                  title="Stop in and out in one token operation for all pools"/>
                     <StringStatCom xxl={1} md={2} sm={3} value={`${inFee / 10 ** 6}%`} valueName="Default Fee In"/>
                     <StringStatCom xxl={1} md={2} sm={3} value={`${outFee / 10 ** 6}%`} valueName="Default Fee Out"/>

@@ -1,12 +1,12 @@
 import {useContext, useMemo} from "react";
 import {UserContext} from "../context/WavesKeeper";
-import {Button, Navbar} from "react-bootstrap";
+import {Button, Navbar, Spinner} from "react-bootstrap";
 import {DataContext} from "../context/Data";
 
 
 export const NavigationUser = ({...props}) => {
     const {login, logout, user, isLogin} = useContext(UserContext);
-    const {globalPoolsSettings } = useContext(DataContext);
+    const {globalPoolsSettings, isLoadingData } = useContext(DataContext);
     const { manager = '', admins = [] } = globalPoolsSettings;
 
     const userName = useMemo(() => {
@@ -25,6 +25,10 @@ export const NavigationUser = ({...props}) => {
         return user;
 
     }, [user, manager]);
+
+    if (isLoadingData && isLogin) {
+        return <Navbar.Text className="p-4"><Spinner size={"sm"}/></Navbar.Text>;
+    }
 
     return <Navbar.Collapse className="justify-content-end mx-3">
         <Navbar.Text className="p-4">

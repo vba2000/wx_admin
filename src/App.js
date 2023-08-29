@@ -9,10 +9,6 @@ function App() {
     const userData = useUserForRoot();
     const fetchedData = useDataForRoot();
 
-    useEffect(() => {
-        return  fetchedData.fetchData();
-    }, [fetchedData.fetchData]);
-
     return (
         <>
             <UserContext.Provider value={userData}>
