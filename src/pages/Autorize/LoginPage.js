@@ -1,4 +1,4 @@
-import {Alert, Tab, Tabs, Container, Button, Row} from "react-bootstrap";
+import {Alert, Tab, Tabs, Container, Button, Row, Col} from "react-bootstrap";
 import {useCallback, useContext} from "react";
 import {UserContext} from "../../context/WavesKeeper";
 import {setMainnet, setTestnet} from "../../services";
@@ -19,14 +19,18 @@ export const LoginPage = () => {
         login();
     }, [login]);
 
-    return <Container className={"d-flex h-100"}>
-        <Alert variant="primary" className={"align-self-center m-5"}>
+    const onLoginGuest = useCallback(() => {
+        login(true);
+    }, [login]);
+
+    return <Container fluid className={"align-content-center p-5"}>
+        <Alert variant="primary" className={""}>
             <Alert.Heading>Login to continue</Alert.Heading>
             <p>
                 Use <a target="_blank" href='https://keeper-wallet.app/' className="m-0">Waves Keeper</a> for login.
             </p>
             <hr/>
-            <Row className="mb-0 d-flex justify-content-center">
+            <Row className="mb-0 justify-content-center">
                 <Tabs
                     onSelect={onSelect}
                     defaultActiveKey="mainnet"
@@ -39,8 +43,13 @@ export const LoginPage = () => {
                     </Tab>
                 </Tabs>
             </Row>
-            <Row>
-                <Button onClick={onLogin}>Login</Button>
+            <Row className={"d-flex justify-content-center"}>
+                <Col md={2}>
+                    <Button className={"w-100"}  onClick={onLogin}>Login</Button>
+                </Col>
+                <Col md={2}>
+                    <Button className={"w-100"} onClick={onLoginGuest} variant={"secondary"}>Enter as Guest</Button>
+                </Col>
             </Row>
         </Alert>
     </Container>;

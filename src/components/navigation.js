@@ -4,14 +4,13 @@ import {NavigationUser} from "./NavigationUser";
 function Navigation() {
     return (
         <>
-            <Navbar expand="lg" bg="dark" data-bs-theme="dark">
-                <Container>
+            <Navbar expand="sm" bg="dark" data-bs-theme="dark">
+                <Container fluid className="">
                     <Navbar.Brand>
                         <Button className="bi bi-tools" disabled variant={"dark"} size={"lg"}></Button>
                         WX Admin
                     </Navbar.Brand>
 
-                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
 
                     {/*<Navbar.Collapse id="basic-navbar-nav">*/}
                     {/*    <Nav className="me-auto">*/}

@@ -1,25 +1,29 @@
 import {Alert, Row, Col, Button, Container, Form, FormGroup, Accordion} from "react-bootstrap";
-import {useContext} from "react";
+import {useCallback, useContext, useMemo} from "react";
 import {DataContext} from "../../../context/Data";
 import {BoolStatCom} from "../../../components/BoolStatCom";
 import {StringStatCom} from "../../../components/StringStatCom";
+import {UserContext} from "../../../context/WavesKeeper";
 
 
 export const GeneralSettings = (params) => {
 
+    const {user} = useContext(UserContext);
     const {fetchData, globalPoolsSettings, isLoadingData, hasError, hasData} = useContext(DataContext);
     const {inFee, outFee, swapFee, spread} = globalPoolsSettings;
+    const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
+
 
     if (isLoadingData || hasError || !hasData) {
         return null;
     }
 
-    return <Accordion className={"m-2"}>
+    return <Accordion className={"m-2 mb-0"}>
         <Accordion.Item eventKey="main_settings" className="m-0">
-            <Accordion.Header>
+            <Accordion.Button disabled={!isManger} variant={"danger"}>
                 <Row className="w-100">
-                    <Col xxl={2} md={3} sm={4}>
-                        <h1>Settings</h1>
+                    <Col xxl={1} md={2} sm={4}>
+                        <h4>Settings</h4>
                     </Col>
                     <BoolStatCom xxl={1} md={2} sm={3} value={true} valueName="Disable pools"
                                  title="Stop all pools operation"/>
@@ -30,12 +34,12 @@ export const GeneralSettings = (params) => {
                     <StringStatCom xxl={1} md={2} sm={3} value={`${swapFee / 10 ** 6}%`} valueName="Default Swap fee"/>
                     <StringStatCom xxl={1} md={2} sm={3} value={`${spread / 10 ** 6}%`} valueName="Default Spread"/>
                     <Col xxl={1} md={1} sm={1} className={""}>
-                        <Button className="bi bi-arrow-clockwise " variant="outline-warning" size="sm"
+                        <Button className="bi bi-arrow-clockwise m-1" variant="outline-warning" size="sm"
                                 onClick={fetchData}
                                 title={"Update data"}/>
                     </Col>
                 </Row>
-            </Accordion.Header>
+            </Accordion.Button>
             <Accordion.Body>
                 full data
             </Accordion.Body>

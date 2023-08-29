@@ -26,7 +26,7 @@ export const NavigationUser = ({...props}) => {
 
     }, [user, manager]);
 
-    return <Navbar.Collapse className="justify-content-end">
+    return <Navbar.Collapse className="justify-content-end mx-3">
         <Navbar.Text className="p-4">
             <small>
                 {userName}

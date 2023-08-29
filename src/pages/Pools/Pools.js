@@ -13,6 +13,7 @@ const Pools = () => {
         <Loader isLoading={isLoadingData}/>
         <LoadingError isLoadingError={hasError}/>
         <GeneralSettings/>
+        <hr className={"w-auto mx-2"}/>
         <PoolList/>
     </Container>
 };
