@@ -75,7 +75,6 @@ export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) =>
     const [sendError, setSendError] = useState(null);
 
     const sendTx = useCallback(() => {
-        let progress = 0;
         const txs = [];
         if (data.status !== undefined) {
             txs.push(setPoolStatusTx(pool.address, data.status));

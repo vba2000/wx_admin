@@ -135,7 +135,10 @@ export const broadcastAndWaitTxs = (txs, progress = (p) => p) => {
     txs = Array.isArray(txs) ? txs : [txs];
     progress(0);
     return txs.reduce((acc, tx, currentIndex) => {
-        const sendTx = () => broadcast(tx);
+        if (!tx) {
+            return acc;
+        }
+        const sendTx = ((tx) => () => broadcast(tx))(tx);
         return acc.then(async () => {
             const {resultPromise: txOnNode} = createPoll(sendTx);
             const tx = await txOnNode;
@@ -155,7 +158,7 @@ export const broadcast = async (tx) => fetch(`${node}transactions/broadcast`, {
         'accept': 'application/json',
         'Content-Type': 'application/json',
     }
-}).then(res => res.json());
+}).then(res => res.status === 200 ? res.json(): Promise.reject(res.json()));
 
 export const getPoolsData = async () => {
     const dataState = await getDataState(factory);
@@ -396,7 +399,8 @@ export const createKeeperInvokeForKeeper = (dApp, func, args, payment) => {
                 function: func,
                 args: args || undefined,
             },
-            payment: payment || []
+            payment: payment || [],
+            chainId: byte.charCodeAt(0)
         }
     };
 };
@@ -461,6 +465,7 @@ export const setFactoryDataTransaction = (pool, globalSettings, data) => {
                 tokens: '0.01',
                 assetId: 'WAVES',
             },
+            chainId: byte.charCodeAt(0)
         },
     } : null;
 };
