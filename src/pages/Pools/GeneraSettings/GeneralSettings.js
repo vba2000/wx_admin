@@ -4,6 +4,7 @@ import {DataContext} from "../../../context/Data";
 import {BoolStatCom} from "../../../components/BoolStatCom";
 import {StringStatCom} from "../../../components/StringStatCom";
 import {UserContext} from "../../../context/WavesKeeper";
+import {GeneralSettingsForm} from "./GeneralSettingsForm";
 
 
 export const GeneralSettings = (params) => {
@@ -46,7 +47,7 @@ export const GeneralSettings = (params) => {
                 </Row>
             </Accordion.Button>
             <Accordion.Body>
-                full data
+                <GeneralSettingsForm/>
             </Accordion.Body>
         </Accordion.Item>
     </Accordion>

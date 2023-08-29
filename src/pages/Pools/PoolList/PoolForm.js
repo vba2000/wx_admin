@@ -126,7 +126,7 @@ export const PoolForm = ({pool, ...props}) => {
                 </FormGroup>
             </Col>
             <Col md={2} xs={6}>
-                <Form.Text muted>Skip Order Validation</Form.Text>
+                <Form.Text muted>Skip Order Valid</Form.Text>
                 <FormGroup>
                     <OnOffSm value={skipOrderValidation} onChange={setSkipOrderValidation}/>
                 </FormGroup>
