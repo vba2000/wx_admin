@@ -1,7 +1,6 @@
 import Routing from "./router";
 import {useUserForRoot, UserContext} from "./context/WavesKeeper";
 import {DataContext, useDataForRoot} from "./context/Data";
-import {useEffect} from "react";
 import {Autorize} from "./pages/Autorize";
 
 

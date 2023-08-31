@@ -1,4 +1,4 @@
-import {Container, Alert, Button, Row} from "react-bootstrap";
+import {Container, Alert, Button} from "react-bootstrap";
 import {useContext} from "react";
 import {DataContext} from "../../context/Data";
 

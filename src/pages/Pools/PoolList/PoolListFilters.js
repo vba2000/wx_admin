@@ -1,4 +1,4 @@
-import {Button, Col, Form, InputGroup, Row} from "react-bootstrap";
+import { Col, Form, InputGroup, Row} from "react-bootstrap";
 import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {DataContext} from "../../../context/Data";
 
@@ -7,7 +7,7 @@ export const PoolListFilters = ({setPoolList, ...props}) => {
 
     const {assets, hasData, pools} = useContext(DataContext);
     const [filters, setFilters] = useState({amountAsset: '*', priceAsset: '*', search: ''});
-    const poolsList = useMemo(() => Object.entries(pools), [pools, hasData]);
+    const poolsList = useMemo(() => Object.entries(pools), [pools]);
     const {amountAssets, priceAssets} = useMemo(() => {
         const hasAmount = {};
         const hasPrice = {};
@@ -45,7 +45,7 @@ export const PoolListFilters = ({setPoolList, ...props}) => {
 
     useEffect(() => {
         setPoolList(newPoolsList);
-    }, [newPoolsList])
+    }, [newPoolsList, setPoolList]);
 
     const setAmountAssetFilter = useCallback((e) => {
         const amountAsset = e.target.value;

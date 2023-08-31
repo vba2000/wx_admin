@@ -1,8 +1,7 @@
 import {Accordion, Col, Row} from "react-bootstrap";
 import {IconLogo} from "../../../components/SvgString";
-import {useContext, useMemo} from "react";
+import {useContext} from "react";
 import {DataContext} from "../../../context/Data";
-import {UserContext} from "../../../context/WavesKeeper";
 
 
 const boolToString = (isActive) => isActive ? <small className="text-bg-success rounded px-2">Enable</small> :
@@ -20,10 +19,7 @@ const poolStatus = (address, status, poolName) => {
 
 export const PoolHeader = ({poolData, ...props}) => {
 
-    const {user} = useContext(UserContext);
     const { globalPoolsSettings, assets } = useContext(DataContext);
-    const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
-
 
     const {
         amountAssetId,
@@ -50,7 +46,7 @@ export const PoolHeader = ({poolData, ...props}) => {
     const poolName = `${amountName || 'no name'}/${priceName || 'no'}`
 
 
-    return <Accordion.Button disabled={!isManger}>
+    return <Accordion.Header>
         <Row>
             <Col className="align-middle rounded bg-light"><IconLogo width={32} height={32} svgString={logo}/></Col>
             {poolStatus(address, status, poolName)}
@@ -93,5 +89,5 @@ export const PoolHeader = ({poolData, ...props}) => {
         </Row>
 
 
-    </Accordion.Button>
+    </Accordion.Header>
 }

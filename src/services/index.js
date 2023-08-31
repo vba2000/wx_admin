@@ -1,14 +1,20 @@
 import {libs} from '@waves/waves-transactions';
 
-const MAINNET = {node: 'https://nodes.waves.exchange/', factory: '3PCuHsTU58WKhCqotbcSwABvdPzqqVAbbTv', byte: 'W'};
+const MAINNET = {
+    node: 'https://nodes.waves.exchange/',
+    factory: '3PCuHsTU58WKhCqotbcSwABvdPzqqVAbbTv',
+    factoryPublicKey: 'HBWgh7DKPyzCnEXKJAJ5dKQ3jmPtMhGD78tt6jRdkV61',
+    byte: 'W'
+};
 const TESTNET = {
     node: 'https://nodes-testnet.wavesnodes.com/',
     factory: '3MsMP2pb2p8MDd6Rxb7XEXqqwEhE8ATfyai',
+    factoryPublicKey: '2JEaBjtjvMoNGKZmL9QxYefa1VkMJM3vMW8rNvTs9R2H',
     byte: 'T'
 };
 
 export let net = 'mainnet';
-let {node, factory, byte} = MAINNET;
+let {node, factory, byte, factoryPublicKey} = MAINNET;
 
 export const setTestnet = () => {
     node = TESTNET.node;
@@ -28,7 +34,7 @@ export const checkNodeNetworkByte = async (user) => {
     // const { generator } =  await fetch(`${node}blocks/headers/last`).then(r => r.json());
     const current = String.fromCharCode(libs.crypto.base58Decode(user)[1]);
     if (current !== byte) {
-        throw `Incorrect network for user ${user}!`;
+        throw new Error(`Incorrect network for user ${user}!`);
     }
 };
 
@@ -42,9 +48,17 @@ const getDataState = async (address) => {
     return data;
 };
 
+export const checkPublicKey = (pk) => {
+    try {
+        return libs.crypto.base58Decode(pk).length === 32;
+    } catch (e) {
+        return false;
+    }
+}
 
 const getAdminsData = async (managerContract) => {
     const dataState = await getDataState(managerContract);
+
     const adminData = dataState.reduce((acc, {key, value}) => {
 
         switch (true) {
@@ -54,9 +68,14 @@ const getAdminsData = async (managerContract) => {
             case key.includes('%s__currentManagerPublicKey'):
                 acc.managerPublicKey = value;
                 acc.manager = pubKeyToAddress(value);
+                break;
             case key.includes('%s__managerPublicKey'):
                 acc.mangerInVotePublicKey = value;
                 acc.mangerInVote = pubKeyToAddress(value);
+                break;
+            case key.includes('%s__pendingManagerPublicKey'):
+                acc.pendingManagerPublicKey = value;
+                acc.pendingManager = pubKeyToAddress(value);
                 break;
             default:
         }
@@ -244,7 +263,9 @@ const parsePools = (factoryDataState) => {
         poolSwapFee: 200000,
         swapFee: 400000,
         factoryContract: factory,
-        spread: 200000
+        spread: 200000,
+        admins: [],
+        manager: ''
     };
     const notUsed = [];
     const wxEmission = {};
@@ -419,6 +440,9 @@ export const setPoolWxEmissionsTx = (amountAssetId, priceAssetId, hasWxEmission)
         ], []);
 };
 
+export const adminVoteForNewManager = (managerPk, managerContract) => {
+    return createKeeperInvokeForKeeper(managerContract, 'voteForNewManager' , [{ value: managerPk, type: 'string' }]);
+};
 
 export const setFactoryDataTransaction = (pool, globalSettings, data) => {
 
@@ -459,7 +483,7 @@ export const setFactoryDataTransaction = (pool, globalSettings, data) => {
         type: 12,
         data: {
             sender: factory,
-            senderPublicKey: 'HBWgh7DKPyzCnEXKJAJ5dKQ3jmPtMhGD78tt6jRdkV61',
+            senderPublicKey: factoryPublicKey,
             data: dataState,
             fee: {
                 tokens: '0.01',

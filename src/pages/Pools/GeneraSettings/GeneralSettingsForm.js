@@ -1,4 +1,4 @@
-import {useCallback, useContext, useState} from "react";
+import { useContext, useState} from "react";
 import {DataContext} from "../../../context/Data";
 import {Col, Container, Form, FormGroup, Row} from "react-bootstrap";
 import {InputWithDecimals} from "../../../components/InputWithDecimals";

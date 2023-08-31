@@ -58,7 +58,7 @@ export const LoginPage = () => {
             <hr/>
             <small className={"text-muted"}>
                 Login to continue.
-                Use <a target="_blank" href='https://keeper-wallet.app/' className="m-0">Waves Keeper</a> for login.
+                Use <a target="_blank" rel="noreferrer"  href='https://keeper-wallet.app/' className="m-0">Waves Keeper</a> for login.
             </small>
         </Alert>
     </Container>;
