@@ -2,7 +2,7 @@ import {Alert, Button, Col, Modal, ProgressBar, Row} from "react-bootstrap";
 import {useCallback, useContext, useMemo, useState} from "react";
 import {UserContext} from "../../../context/WavesKeeper";
 import {
-    broadcast, broadcastAndWaitTxs,
+    broadcastAndWaitTxs,
     setFactoryDataTransaction,
     setPoolStatusTx,
     setPoolWxEmissionsTx,
@@ -67,14 +67,16 @@ const ShowDiff = ({data}) => {
 
 export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) => {
 
-    const { globalPoolsSettings, updatePool, pools } = useContext(DataContext);
+    const { globalPoolsSettings, updatePool } = useContext(DataContext);
 
-    const {signTransactionsPackage, txLoading, isLogin, hasError} = useContext(UserContext);
+    const {signTransactionsPackage, txLoading, isLogin} = useContext(UserContext);
     const btnIsDisable = useMemo(() => !isLogin, [isLogin]);
     const [progress, setProgress] = useState(null);
     const [sendError, setSendError] = useState(null);
 
     const sendTx = useCallback(() => {
+        setSendError('');
+
         const txs = [];
         if (data.status !== undefined) {
             txs.push(setPoolStatusTx(pool.address, data.status));
@@ -100,7 +102,7 @@ export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) =>
                         setSendError(e);
                     });
             });
-    }, [data, pool, updatePool, setSendError]);
+    }, [data, pool, updatePool, setSendError, globalPoolsSettings, hideModal, signTransactionsPackage]);
 
     return <Modal show={isShow}
                   backdrop="static"
@@ -113,6 +115,7 @@ export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) =>
         </Modal.Header>
         <Modal.Body>
             {!isLogin ? <Alert variant={"warning"}>Login by keeper!!!</Alert> : <ShowDiff data={data}/>}
+            <Alert hidden={!sendError} variant={"danger"}>Send tx error. Try again!!!</Alert>
         </Modal.Body>
         <Modal.Footer>
             {progress !== null ? <Col><ProgressBar variant={"info"} striped now={progress}/> </Col>: <Col  className={"d-flex justify-content-center"}>

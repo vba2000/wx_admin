@@ -24,14 +24,14 @@ export const NavigationUser = ({...props}) => {
 
         return user;
 
-    }, [user, manager]);
+    }, [user, manager, admins]);
 
     if (isLoadingData && isLogin) {
         return <Navbar.Text className="p-4"><Spinner size={"sm"}/></Navbar.Text>;
     }
 
     return <Navbar.Collapse className="justify-content-end mx-3">
-        <Navbar.Text className="p-4">
+        <Navbar.Text className="p-4" title={user}>
             <small>
                 {userName}
             </small>

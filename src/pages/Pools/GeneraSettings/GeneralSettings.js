@@ -1,19 +1,21 @@
-import {Alert, Row, Col, Button, Container, Form, FormGroup, Accordion} from "react-bootstrap";
+import {Row, Col, Button, Accordion} from "react-bootstrap";
 import {useCallback, useContext, useMemo} from "react";
 import {DataContext} from "../../../context/Data";
 import {BoolStatCom} from "../../../components/BoolStatCom";
 import {StringStatCom} from "../../../components/StringStatCom";
 import {UserContext} from "../../../context/WavesKeeper";
 import {GeneralSettingsForm} from "./GeneralSettingsForm";
+import {AdminVoting} from "../../../components/AdminVoting";
 
 
-export const GeneralSettings = (params) => {
+export const GeneralSettings = ({...params}) => {
 
-    const {user} = useContext(UserContext);
+    const {user, signTransactionsPackage} = useContext(UserContext);
     const {fetchData, globalPoolsSettings, isLoadingData, hasError, hasData} = useContext(DataContext);
     const {inFee, outFee, swapFee, spread} = globalPoolsSettings;
     const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
-    const { oneTokenDisable, shutdown } = globalPoolsSettings;
+    const isAdmin = useMemo(() => (globalPoolsSettings.admins || []).includes(user), [user, globalPoolsSettings.admins]);
+    const {oneTokenDisable, shutdown} = globalPoolsSettings;
     const onUpdate = useCallback((e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -24,9 +26,9 @@ export const GeneralSettings = (params) => {
         return null;
     }
 
-    return <Accordion className={"m-2 mb-0"}>
-        <Accordion.Item eventKey="main_settings" className="m-0">
-            <Accordion.Button disabled={!isManger} variant={"danger"}>
+    return <Accordion className={"m-2 mb-0"} activeKey={!isManger ? "no" : undefined}>
+        <Accordion.Item eventKey="main_settings" className="m-0" >
+            <Accordion.Header >
                 <Row className="w-100">
                     <Col xxl={1} md={2} sm={4}>
                         <h5>Main settings</h5>
@@ -39,13 +41,16 @@ export const GeneralSettings = (params) => {
                     <StringStatCom xxl={1} md={2} sm={3} value={`${outFee / 10 ** 6}%`} valueName="Default Fee Out"/>
                     <StringStatCom xxl={1} md={2} sm={3} value={`${swapFee / 10 ** 6}%`} valueName="Default Swap fee"/>
                     <StringStatCom xxl={1} md={2} sm={3} value={`${spread / 10 ** 6}%`} valueName="Default Spread"/>
-                    <Col xxl={1} md={1} sm={1} className={""} hidden={!isManger}>
+                    <AdminVoting xxl={1} md={1} sm={1} isAdmin={isManger || isAdmin}
+                                 globalSettings={globalPoolsSettings} user={user}
+                                 signTransactionsPackage={signTransactionsPackage}/>
+                    <Col xxl={1} md={1} sm={1} className={""}>
                         <Button className="bi bi-arrow-clockwise m-1" variant="outline-warning" size="sm"
                                 onClick={onUpdate}
                                 title={"Update data"}/>
                     </Col>
                 </Row>
-            </Accordion.Button>
+            </Accordion.Header>
             <Accordion.Body>
                 <GeneralSettingsForm/>
             </Accordion.Body>

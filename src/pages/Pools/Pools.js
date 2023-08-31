@@ -1,5 +1,5 @@
 import {Col, Container, Image, Row} from "react-bootstrap";
-import {useContext, useEffect} from "react";
+import {useContext} from "react";
 import {LoadingError} from "./LoadingError";
 import {GeneralSettings} from "./GeneraSettings/GeneralSettings";
 import {PoolList} from "./PoolList/PoolList";

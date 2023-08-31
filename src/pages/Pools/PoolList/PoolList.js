@@ -1,20 +1,21 @@
-import {Accordion, Col, Container, Form, Row} from "react-bootstrap";
+import {Accordion, Col} from "react-bootstrap";
 import {PoolHeader} from "./PoolHeader";
 import {PoolForm} from "./PoolForm";
-import React, {useCallback, useContext, useMemo, useState} from "react";
+import React, {useContext, useMemo, useState} from "react";
 import {DataContext} from "../../../context/Data";
 import {PoolListFilters} from "./PoolListFilters";
+import {UserContext} from "../../../context/WavesKeeper";
 
 
 export const PoolList = (params) => {
-    const { isLoadingData, hasError } = useContext(DataContext);
+    const { isLoadingData, hasError, globalPoolsSettings } = useContext(DataContext);
+    const {user} = useContext(UserContext);
     const [poolsList, setPoolList] = useState([]);
+    const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
 
-    if (isLoadingData || hasError) return null;
-
-    return<Col className="m-2">
+    return<Col className="m-2" hidden={isLoadingData || hasError}>
         <PoolListFilters setPoolList={setPoolList}/>
-        <Accordion>
+        <Accordion activeKey={!isManger ? "no" : undefined}>
             {poolsList.map(([, pool]) =>
                 (<Accordion.Item eventKey={pool.address} key={pool.address} className="m-0">
                     <PoolHeader poolData={pool}/>
@@ -25,4 +26,4 @@ export const PoolList = (params) => {
             }
         </Accordion>
     </Col>;
-}
+};

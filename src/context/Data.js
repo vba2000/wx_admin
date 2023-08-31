@@ -46,7 +46,7 @@ export const useDataForRoot = () => {
     const updatePool = useCallback((poolAddress, data) => {
         const newPools = { ...pools, [poolAddress]: { ...(pools[poolAddress] || {}), ...(data || {}) } }
         setPools(newPools);
-    }, [setPools, hasData, pools])
+    }, [setPools, pools])
 
     const changeNetwork = useCallback((network) => {
         if (network === 'testnet') {
@@ -65,7 +65,7 @@ export const useDataForRoot = () => {
 
     const api = useMemo(() => {
         return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool, network, changeNetwork };
-    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, broadcast, hasData, updatePool, network, changeNetwork])
+    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, hasData, updatePool, network, changeNetwork])
     return api;
 };
 

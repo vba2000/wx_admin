@@ -17,7 +17,7 @@ export const InputWithDecimals = ({ hasDefault = true, value, onChange, decimals
                 onChange(rawNum);
             }
         }
-    }, [decimals, value, onChange]);
+    }, [decimals, value, onChange, setCurrentValue, hasDefault]);
 
     const currentPlaceHolder = useMemo(() => {
         if (value === null && hasDefault) {
@@ -39,7 +39,7 @@ export const InputWithDecimals = ({ hasDefault = true, value, onChange, decimals
             setCurrentValue(!hasDefault ? value / 10 ** decimals || 0 : value !== null ? value / 10 ** decimals : '');
         }
 
-    }, [value, hasDefault, decimals]);
+    }, [value, hasDefault, decimals, setCurrentValue, currentValue]);
 
     return <Form.Control size="sm" type="text" placeholder={currentPlaceHolder} value={currentValue} onChange={onChangeValue}/>
 }
