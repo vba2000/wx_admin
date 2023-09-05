@@ -28,7 +28,7 @@ export const GeneralSettings = ({...params}) => {
 
     return <Accordion className={"m-2 mb-0"} activeKey={!isManger ? "no" : undefined}>
         <Accordion.Item eventKey="main_settings" className="m-0" >
-            <Accordion.Header >
+            <Accordion.Header>
                 <Row className="w-100">
                     <Col xxl={1} md={2} sm={4}>
                         <h5>Main settings</h5>

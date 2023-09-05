@@ -26,9 +26,9 @@ export const LoginPage = () => {
 
     return <Container className={""}>
         <Alert variant="secondary" className={"m-sm-5 p-sm-5"}>
-            <p className={"text-nowrap text-center"}>
+            <span className={"text-nowrap text-center"}>
                 <h1><span className="bi bi-tools"></span> WX Admin</h1>
-            </p>
+            </span>
             <Row className="mb-0">
                 <Tabs
                     onSelect={onSelect}

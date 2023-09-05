@@ -263,7 +263,7 @@ const parsePools = (factoryDataState) => {
         poolSwapFee: 200000,
         swapFee: 400000,
         factoryContract: factory,
-        spread: 200000,
+        spread: 2000000,
         admins: [],
         manager: ''
     };
@@ -299,6 +299,11 @@ const parsePools = (factoryDataState) => {
                 const [, , pool5] = key.split('__');
                 poolsConfig[pool5] = poolsConfig[pool5] || {};
                 poolsConfig[pool5] = {...poolsConfig[pool5], skipValidation: value};
+                break;
+            case key.includes('poolWeight'):
+                const [, , pool6] = key.split('__');
+                poolsConfig[pool6] = poolsConfig[pool6] || {};
+                poolsConfig[pool6] = {...poolsConfig[pool6], poolWeight: value};
                 break;
             case key.includes('%s%s__swapFee__'):
                 const [, , pool4] = key.split('__');
@@ -365,6 +370,8 @@ const parsePools = (factoryDataState) => {
         }
         return acc;
     }, {});
+
+    console.log(notUsed);
 
     return {poolsData, globalSettings};
 }

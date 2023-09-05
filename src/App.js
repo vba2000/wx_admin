@@ -2,6 +2,7 @@ import Routing from "./router";
 import {useUserForRoot, UserContext} from "./context/WavesKeeper";
 import {DataContext, useDataForRoot} from "./context/Data";
 import {Autorize} from "./pages/Autorize";
+import {Toasts} from "./components/Toasts";
 
 
 function App() {
@@ -12,9 +13,11 @@ function App() {
         <>
             <UserContext.Provider value={userData}>
                 <DataContext.Provider value={fetchedData}>
-                    <Autorize>
-                        <Routing/>
-                    </Autorize>
+                    <Toasts>
+                        <Autorize>
+                            <Routing/>
+                        </Autorize>
+                    </Toasts>
                 </DataContext.Provider>
             </UserContext.Provider>
         </>
