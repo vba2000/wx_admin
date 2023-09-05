@@ -29,3 +29,5 @@ export const AdminVoting = ({ isAdmin, globalSettings, user, signTransactionsPac
         {children}
     </Col>;
 };
+
+AdminVoting.displayName = 'AdminVoting';

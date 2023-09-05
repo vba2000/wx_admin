@@ -12,8 +12,8 @@ export const LoadingError = (params) => {
         return null;
     }
 
-    return <Container fluid className="text-center m-lg-5 h-100">
-        <Alert variant="danger">
+    return <Container fluid className="text-center my-5 h-100">
+        <Alert variant="danger ">
             <Alert.Heading>Connection problems!</Alert.Heading>
             <Button onClick={fetchData}>Try again.</Button>
         </Alert>
