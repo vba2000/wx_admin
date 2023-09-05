@@ -94,7 +94,7 @@ export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) =>
                 return broadcastAndWaitTxs(signedTxs, setProgress)
                     .then(() => {
                         setProgress(null);
-                        updatePool({ ...data });
+                        updatePool(pool.address, {...data });
                         hideModal();
                     })
                     .catch(e => {
