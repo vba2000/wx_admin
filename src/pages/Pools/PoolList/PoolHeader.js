@@ -64,7 +64,7 @@ export const PoolHeader = ({poolData, ...props}) => {
     return <Accordion.Header>
         <Row>
             <Col className="align-middle bg-light my-2"><IconLogo width={32} height={32} svgString={logo}/><small
-                className="text-muted">{poolId.replace('__', '_')}</small></Col>
+                className="text-muted">{(poolId).replace('__', '_')}</small></Col>
             <PoolStatus address={address} status={status} poolName={poolName}/>
             <Col className="my-2">
                 <Row><small className="lab}el label-primary text-nowrap">Swap</small></Row>
