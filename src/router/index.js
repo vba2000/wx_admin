@@ -17,20 +17,12 @@ const router = createBrowserRouter([
                 default: true,
             },
             {
-                path: "/pools",
+                path: "pools",
                 element: <Pools />,
                 default: true,
             },
             {
-                path: "/pools/:poolId",
-                element: <Pools />,
-            },
-            {
-                path: "/assets",
-                element: <Assets />,
-            },
-            {
-                path: "/assets/:assetId",
+                path: "assets",
                 element: <Assets />,
             },
         ]

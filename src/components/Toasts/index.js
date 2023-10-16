@@ -41,9 +41,9 @@ export const Toasts = ({children, ...props}) => {
         >
             {msgs.map(({header, text, variant, id, timeout}) => {
                 return (<Toast key={id} autohide={true} animation={true} delay={timeout} bg={variant} show={true} className={'opacity-75'}>
-                    <Toast.Header closeButton={false} bg={variant}>
+                    { header ? <Toast.Header closeButton={false} bg={variant}>
                         <strong className="me-auto">{header}</strong>
-                    </Toast.Header>
+                    </Toast.Header> : null }
                     <Toast.Body>{text}</Toast.Body>
                 </Toast>)
             })
