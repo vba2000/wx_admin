@@ -1,5 +1,6 @@
-import {Navbar, Container, Button} from 'react-bootstrap';
+import {Navbar, Container, Button, Nav} from 'react-bootstrap';
 import {NavigationUser} from "./NavigationUser";
+import {Link} from "react-router-dom";
 
 function Navigation() {
     return (
@@ -12,20 +13,20 @@ function Navigation() {
                     </Navbar.Brand>
 
 
-                    {/*<Navbar.Collapse id="basic-navbar-nav">*/}
-                    {/*    <Nav className="me-auto">*/}
-                    {/*        <Nav.Link>*/}
-                    {/*            <Link to={'/pools'}>*/}
-                    {/*                Pools*/}
-                    {/*            </Link>*/}
-                    {/*        </Nav.Link>*/}
-                    {/*        <Nav.Link>*/}
-                    {/*            <Link to={'/assets'}>*/}
-                    {/*                Assets*/}
-                    {/*            </Link>*/}
-                    {/*        </Nav.Link>*/}
-                    {/*    </Nav>*/}
-                    {/*</Navbar.Collapse>*/}
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link>
+                                <Link to={'pools'}>
+                                    Pools
+                                </Link>
+                            </Nav.Link>
+                            <Nav.Link>
+                                <Link to={'assets'}>
+                                    Assets
+                                </Link>
+                            </Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
 
                     <NavigationUser/>
                 </Container>

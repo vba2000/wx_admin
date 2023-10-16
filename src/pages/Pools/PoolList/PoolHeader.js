@@ -15,7 +15,7 @@ const PoolStatus = ({address, status, poolName, ...props}) => {
         e.stopPropagation();
         e.preventDefault();
         copyTextToClipboard(address);
-        addNewMessage({ header: 'Copy address', text: `${poolName}`, timeout: 1000, variant: 'light' })
+        addNewMessage({ text: `${poolName} address copied`, timeout: 1000, variant: 'light' })
     }, [showName, address, addNewMessage]);
     const statusStr = status === 1 ? 'Active' : status === 2 ? 'Disabled put tokens' : status === 3 ? 'Disabled put tokens & bot trade' : 'Disabled pool';
     const textColorClass = status === 1 ? 'text-bg-success' : status === 2 ? 'text-bg-warning' : status === 3 ? 'text-bg-danger' : 'text-bg-secondary';

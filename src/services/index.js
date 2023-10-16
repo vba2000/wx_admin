@@ -410,7 +410,7 @@ const parseConfig = (data) => {
 }
 
 export const convertSvgString = (svgString) => {
-    const base64Img = window.btoa(svgString);
+    const base64Img = window.btoa(unescape(encodeURIComponent(svgString)));
     return base64Img;
 }
 
