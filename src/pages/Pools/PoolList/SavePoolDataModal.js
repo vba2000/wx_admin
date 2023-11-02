@@ -41,7 +41,11 @@ const ShowDiff = ({data}) => {
         poolSwapFee,
         matcherSwapFee,
         wxEmission,
-        skipValidation
+        skipValidation,
+        amp,
+        profitIncrease,
+        stepSize,
+        ordersNumber,
     } = data || {};
 
     return <Row className={"mb-2"}>
@@ -62,6 +66,14 @@ const ShowDiff = ({data}) => {
                   label="Swap fee to pool %"/>
         <DiffView value={numberOrDefault(matcherSwapFee, 0)} realValue={numberOrDefault(matcherSwapFee, 6)}
                   label="Swap fee to matcher %"/>
+        <DiffView value={numberOrDefault(ordersNumber, 0)} realValue={numberOrDefault(ordersNumber, 0)}
+                  label="Orders number"/>
+        <DiffView value={numberOrDefault(stepSize, 0)} realValue={numberOrDefault(stepSize, 6)}
+                  label="Order Step size"/>
+        <DiffView value={numberOrDefault(profitIncrease, 0)} realValue={numberOrDefault(profitIncrease, 6)}
+                  label="Order Profit"/>
+        { amp && <DiffView value={numberOrDefault(amp, 0)} realValue={numberOrDefault(amp, 0)}
+                  label="Leverage"/> }
     </Row>
 };
 
@@ -85,9 +97,11 @@ export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) =>
             txs.push(setPoolWxEmissionsTx(pool.amountAssetId, pool.priceAssetId, data.wxEmission));
         }
         const dataTransaction = setFactoryDataTransaction(pool, globalPoolsSettings, data);
+
         if (dataTransaction) {
             txs.push(dataTransaction);
         }
+
         signTransactionsPackage(txs)
             .then(signedTxs => {
                 setProgress(0);
@@ -97,9 +111,9 @@ export const SavePoolDataModal = ({pool, isShow, hideModal, data, ...params}) =>
                         updatePool(pool.address, {...data });
                         hideModal();
                     })
-                    .catch(e => {
+                    .catch(async e => {
                         setProgress(null);
-                        setSendError(e);
+                        setSendError(await e);
                     });
             });
     }, [data, pool, updatePool, setSendError, globalPoolsSettings, hideModal, signTransactionsPackage]);

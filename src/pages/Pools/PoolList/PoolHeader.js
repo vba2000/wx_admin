@@ -1,4 +1,4 @@
-import {Accordion, Button, Col, Row} from "react-bootstrap";
+import {Accordion, Col, Row} from "react-bootstrap";
 import {IconLogo} from "../../../components/SvgString";
 import {useCallback, useContext, useState} from "react";
 import {DataContext} from "../../../context/Data";
@@ -16,7 +16,7 @@ const PoolStatus = ({address, status, poolName, ...props}) => {
         e.preventDefault();
         copyTextToClipboard(address);
         addNewMessage({ text: `${poolName} address copied`, timeout: 1000, variant: 'light' })
-    }, [showName, address, addNewMessage]);
+    }, [address, addNewMessage, poolName]);
     const statusStr = status === 1 ? 'Active' : status === 2 ? 'Disabled put tokens' : status === 3 ? 'Disabled put tokens & bot trade' : 'Disabled pool';
     const textColorClass = status === 1 ? 'text-bg-success' : status === 2 ? 'text-bg-warning' : status === 3 ? 'text-bg-danger' : 'text-bg-secondary';
 
@@ -51,6 +51,10 @@ export const PoolHeader = ({poolData, ...props}) => {
         wxEmission,
         skipValidation,
         poolWeight,
+        ordersNumber,
+        amp,
+        stepSize,
+        profitIncrease,
     } = poolData;
     const {logo = ""} = assets[LPAssetId] || {};
     const swap = !swapDisable;
@@ -102,6 +106,22 @@ export const PoolHeader = ({poolData, ...props}) => {
             <Col className="my-2">
                 <Row><small className="label label-primary text-nowrap">Weight</small></Row>
                 <Row><small className="text-muted">{(poolWeight || 0) / 10 ** 6}%</small></Row>
+            </Col>
+            { amp && <Col className="my-2">
+                <Row><small className="label label-primary text-nowrap">Leverage</small></Row>
+                <Row><small className="text-muted">{(amp || 'N/A')}</small></Row>
+            </Col> }
+            <Col className="my-2">
+                <Row><small className="label label-primary text-nowrap">Orders</small></Row>
+                <Row><small className="text-muted">{(ordersNumber || 0)}</small></Row>
+            </Col>
+            <Col className="my-2">
+                <Row><small className="label label-primary text-nowrap">Step size</small></Row>
+                <Row><small className="text-muted">{(stepSize || 0) / 10 ** 6}</small></Row>
+            </Col>
+            <Col className="my-2">
+                <Row><small className="label label-primary text-nowrap">Profit</small></Row>
+                <Row><small className="text-muted">{(profitIncrease || 0) / 10 ** 6}</small></Row>
             </Col>
         </Row>
 

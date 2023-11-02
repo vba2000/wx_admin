@@ -265,12 +265,13 @@ const parsePools = (factoryDataState) => {
         factoryContract: factory,
         spread: 2000000,
         admins: [],
-        manager: ''
+        manager: '',
+        assetsMinAmount: {},
     };
     const notUsed = [];
     const wxEmission = {};
     factoryDataState.forEach(dataStatePair => {
-        const {key, value} = dataStatePair;
+        const { key, value } = dataStatePair;
         switch (true) {
             case key.includes('__mappings__poolAssets2PoolContract'):
                 const [, a2, p2] = key.split('__');
@@ -335,6 +336,30 @@ const parsePools = (factoryDataState) => {
             case key.includes('__oneTokenOperationsDisabled'):
                 const [, a3, p4] = key.split('__');
                 oneTokenDisabled[`${a3}__${p4}`] = value;
+                break;
+
+
+            case key.includes('%s%s__ordersNumber__'):
+                const [, , pool7] = key.split('__');
+                poolsConfig[pool7] = {...poolsConfig[pool7], ordersNumber: value || 20 };
+                break;
+            case key.includes('%s%s__amp__') && !key.includes('%s%s%s__amp__'):
+                const [, , pool8] = key.split('__');
+                poolsConfig[pool8] = {...poolsConfig[pool8], amp: value };
+                break
+            case key.includes('%s%s__stepSize__'):
+                const [, , pool9] = key.split('__');
+                poolsConfig[pool9] = {...poolsConfig[pool9], stepSize: value };
+                break;
+            case key.includes('%s%s__profitIncrease__'):
+                const [, , pool10] = key.split('__');
+                poolsConfig[pool10] = {...poolsConfig[pool10], profitIncrease: value };
+                break;
+
+
+            case key === '%s%s__poolAssetMinAmount':
+                const [, , asset] = key.split('__');
+                globalSettings.assetsMinAmount[asset] = value;
                 break;
             case key === '%s__swapFeeDefault':
                 alert('Do not forget');
@@ -484,6 +509,12 @@ export const setFactoryDataTransaction = (pool, globalSettings, data) => {
         {key: `%s%s__inFee__${pool.address}`, type: 'integer', value: data.inFee},
         {key: `%s%s__outFee__${pool.address}`, type: 'integer', value: data.outFee},
         {key: `%s%s__swapFee__${pool.address}`, type: swapFeeValue ? 'string' : null, value: swapFeeValue},
+        { key: `%s%s__amp__${pool.address}`, type: 'integer', value: data.amp || undefined },
+        { key: `%s%s__profitIncrease__${pool.address}`, type: 'integer', value: data.profitIncrease || undefined },
+        { key: `%s%s__stepSize__${pool.address}`, type: 'integer', value: data.stepSize || undefined },
+        { key: `%s%s__ordersNumber__${pool.address}`, type: 'integer', value: data.ordersNumber || undefined },
+
+
     ].filter((dataSet) => dataSet.value !== undefined);
 
     return dataState.length ? {

@@ -22,7 +22,7 @@ export const AdminVoting = ({ isAdmin, globalSettings, user, signTransactionsPac
     }, []);
 
     return <Col {...props} hidden={!isAdmin} onClick={stopPropagation}>
-        <Button className="bi bi-check2-circle m-1" variant="outline-info" size="sm"
+        <Button as='a' className="bi bi-check2-circle m-1" variant="outline-info" size="sm"
                 onClick={showModal}
                 title={"Admin voting"}/>
         <VotingModal show={isShowModal} closeModal={closeModal} globalSettings={globalSettings} user={user} signTransactionsPackage={signTransactionsPackage}/>
