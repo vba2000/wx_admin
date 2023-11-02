@@ -32,11 +32,16 @@ export const PoolForm = ({pool, ...props}) => {
     const [skipOrderValidation, setSkipOrderValidation] = useState(!!pool.skipValidation);
 
     const [spread, setSpread] = useState(pool.spread);
+    const [ordersNumber, setOrdersNumber] = useState(pool.ordersNumber);
+    const [stepSize, setStepSize] = useState(pool.stepSize);
+    const [profitIncrease, setProfitIncrease] = useState(pool.profitIncrease);
+    const [amp, setAmp] = useState(pool.amp || null);
 
     const [feeInOneTkn, setFeeInOneTkn] = useState(pool.inFee || null);
     const [feeOutOneTkn, setFeeOutOneTkn] = useState(pool.outFee || null);
     const [poolSwapFee, setPoolSwapFee] = useState(pool.poolSwapFee || null);
     const [matcherSwapFee, setMatcherSwapFee] = useState(pool.matcherSwapFee || null);
+
 
     const clearChangesCb = useCallback(() => {
         setStatus(pool.status);
@@ -49,7 +54,11 @@ export const PoolForm = ({pool, ...props}) => {
         setFeeOutOneTkn(pool.outFee || null);
         setPoolSwapFee(pool.poolSwapFee || null);
         setMatcherSwapFee(pool.matcherSwapFee || null);
-    }, [setStatus, setWxEmission, setSkipOrderValidation, setOneTkn, setSwap, setSpread, setFeeInOneTkn, setFeeOutOneTkn, setPoolSwapFee, setMatcherSwapFee, pool]);
+        setOrdersNumber(pool.ordersNumber || 20);
+        setStepSize(pool.stepSize || 1000000);
+        setProfitIncrease(pool.profitIncrease || 1000000);
+        setAmp(pool.amp || null);
+    }, [setAmp, setProfitIncrease, setStepSize, setOrdersNumber, setStatus, setWxEmission, setSkipOrderValidation, setOneTkn, setSwap, setSpread, setFeeInOneTkn, setFeeOutOneTkn, setPoolSwapFee, setMatcherSwapFee, pool]);
 
     const diff = useMemo(() => {
         let diff = {};
@@ -64,6 +73,18 @@ export const PoolForm = ({pool, ...props}) => {
         }
         if (pool.spread !== spread) {
             diff.spread = spread;
+        }
+        if (pool.ordersNumber !== ordersNumber) {
+            diff.ordersNumber = ordersNumber;
+        }
+        if (pool.stepSize !== stepSize) {
+            diff.stepSize = stepSize;
+        }
+        if (pool.profitIncrease !== profitIncrease) {
+            diff.profitIncrease = profitIncrease;
+        }
+        if (pool.amp && amp && pool.amp !== amp) {
+            diff.amp = amp;
         }
         if ((pool.inFee || null) !== feeInOneTkn) {
             diff.inFee = feeInOneTkn;
@@ -84,7 +105,7 @@ export const PoolForm = ({pool, ...props}) => {
         }
 
         return !!Object.entries(diff).length ? diff : null;
-    }, [pool, status, oneTkn, swap, spread, feeInOneTkn, feeOutOneTkn, poolSwapFee, matcherSwapFee, wxEmission, skipOrderValidation]);
+    }, [pool, amp, profitIncrease, stepSize, status, oneTkn, swap, spread, feeInOneTkn, feeOutOneTkn, poolSwapFee, matcherSwapFee, wxEmission, skipOrderValidation, ordersNumber]);
 
     const [saveModalShow, setSaveModalShow] = useState(false);
 
@@ -162,6 +183,38 @@ export const PoolForm = ({pool, ...props}) => {
                 <FormGroup>
                     <InputWithDecimals hasDefault={true} value={matcherSwapFee} onChange={setMatcherSwapFee} decimals={6} placeholder={0}/>
                 </FormGroup></Col>
+        </Row>
+        <hr/>
+        <Row>
+            <Col lg={2} xs={6}>
+                <Form.Text muted>Orders Number</Form.Text>
+                <FormGroup>
+                    <InputWithDecimals  hasDefault={false} value={ordersNumber} onChange={setOrdersNumber} decimals={0} placeholder={20}/>
+                </FormGroup>
+            </Col>
+            <Col lg={2} xs={6}>
+                <Form.Text  muted>Step Size</Form.Text>
+                <FormGroup>
+                    <InputWithDecimals hasDefault={true} value={stepSize} onChange={setStepSize} decimals={6} placeholder={1}/>
+                </FormGroup>
+            </Col>
+            <Col lg={2} xs={6}>
+                <Form.Text muted>Profit</Form.Text>
+                <FormGroup>
+                    <InputWithDecimals hasDefault={true} value={profitIncrease} onChange={setProfitIncrease} decimals={6} placeholder={1}/>
+                </FormGroup>
+            </Col>
+            { amp !== null && <Col lg={2} xs={6}>
+                <Form.Text muted>Leverage</Form.Text>
+                <FormGroup>
+                    <InputWithDecimals hasDefault={true} value={amp} onChange={setAmp} decimals={0} placeholder={500}/>
+                </FormGroup>
+            </Col>}
+            {/*<Col lg={2} xs={6}>*/}
+            {/*    <Form.Text muted>Swap Matcher fee %</Form.Text>*/}
+            {/*    <FormGroup>*/}
+            {/*        <InputWithDecimals hasDefault={true} value={matcherSwapFee} onChange={setMatcherSwapFee} decimals={6} placeholder={0}/>*/}
+            {/*    </FormGroup></Col>*/}
         </Row>
         <hr/>
         <Row>

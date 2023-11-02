@@ -2,10 +2,11 @@ import { Form }  from 'react-bootstrap';
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 export const InputWithDecimals = ({ hasDefault = true, value, onChange, decimals = 1, placeholder = '', ...props }) => {
-
+    value = isNaN(value) ? null : value;
     const [currentValue, setCurrentValue] = useState(!hasDefault ? value / 10 ** decimals || 0 : value !== null ? value / 10 ** decimals : '');
 
     const onChangeValue = useCallback((event) => {
+
         if(event.target.value === '') {
             onChange(hasDefault ? null : 0);
             setCurrentValue('');
@@ -28,6 +29,7 @@ export const InputWithDecimals = ({ hasDefault = true, value, onChange, decimals
     }, [value, placeholder, hasDefault]);
 
     useEffect(() => {
+
         let current = hasDefault ? null : 0;
         if(currentValue === '') {
             current = hasDefault ? null : 0;
