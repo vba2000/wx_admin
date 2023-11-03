@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import MainPage from '../pages/MainPage';
 import Pools from "../pages/Pools/Pools";
-import Assets from "../pages/Assets";
+import Assets from "../pages/Assets/Assets";
 
 const router = createBrowserRouter([
     {

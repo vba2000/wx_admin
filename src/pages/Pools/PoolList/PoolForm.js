@@ -84,7 +84,7 @@ export const PoolForm = ({pool, ...props}) => {
             diff.profitIncrease = profitIncrease;
         }
         if (pool.amp && amp && pool.amp !== amp) {
-            diff.amp = amp;
+            diff.amp = amp || undefined;
         }
         if ((pool.inFee || null) !== feeInOneTkn) {
             diff.inFee = feeInOneTkn;
@@ -207,7 +207,7 @@ export const PoolForm = ({pool, ...props}) => {
             { amp !== null && <Col lg={2} xs={6}>
                 <Form.Text muted>Leverage</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={true} value={amp} onChange={setAmp} decimals={0} placeholder={500}/>
+                    <InputWithDecimals hasDefault={false} value={amp} onChange={setAmp} decimals={0} placeholder={50}/>
                 </FormGroup>
             </Col>}
             {/*<Col lg={2} xs={6}>*/}

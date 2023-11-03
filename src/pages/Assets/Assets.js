@@ -1,12 +1,12 @@
-import {Col, Container, Row} from "react-bootstrap";
 import {useContext} from "react";
-import {LoadingError} from "../../components/LoadingError";
-import {GeneralSettings} from "./GeneraSettings/GeneralSettings";
-import {PoolList} from "./PoolList/PoolList";
 import {DataContext} from "../../context/Data";
+import {Col, Container, Row} from "react-bootstrap";
+import {LoadingError} from "../../components/LoadingError";
 import {ImageLoader} from "../../components/ImageLoader";
+import {AssetList} from "./AssetsList/AssetList";
 
-const Pools = () => {
+
+const Assets = () => {
     const {isLoadingData, hasError} = useContext(DataContext);
 
     return <Container fluid className={"align-items-center justify-content-center"} style={{minWidth: 500}}>
@@ -16,10 +16,9 @@ const Pools = () => {
                 <ImageLoader height={200} hidden={!isLoadingData}/>
             </Col>
         </Row>
-        <GeneralSettings/>
         <hr className={"mx-2"} hidden={isLoadingData}/>
-        <PoolList/>
+        <AssetList/>
     </Container>
 };
 
-export default Pools;
+export default Assets;
