@@ -1,5 +1,5 @@
 import {useCallback, useMemo, useState} from "react";
-import {adminVoteForNewManager, broadcastAndWaitTxs, checkPublicKey} from "../../services";
+import {activateNewManager, adminVoteForNewManager, broadcastAndWaitTxs, checkPublicKey} from "../../services";
 
 
 export const useVoteData = (user, globalSettings, closeModal, signTransactionsPackage) => {
@@ -7,6 +7,8 @@ export const useVoteData = (user, globalSettings, closeModal, signTransactionsPa
     const hasNewVote = useMemo(() => {
         return !!globalSettings.pendingManager && globalSettings.pendingManager !== globalSettings.manager;
     }, [globalSettings.pendingManager, globalSettings.manager]);
+
+    const iAmNewManager = useMemo(() => globalSettings.pendingManager && user === globalSettings.pendingManager, [user, globalSettings.pendingManager]);
 
     const isAdmin = useMemo(() => (globalSettings.admins || []).includes(user), [user, globalSettings.admins]);
 
@@ -38,5 +40,19 @@ export const useVoteData = (user, globalSettings, closeModal, signTransactionsPa
         setIsLoading(false);
     }, [newAdmin, globalSettings.managerContract, closeModal, setErrorVote, signTransactionsPackage]);
 
-    return { isAdmin, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, errorPk, errorVote };
+    const activateManager = useCallback(async () => {
+        setErrorVote(false);
+        setIsLoading(true);
+        try {
+            const tx = activateNewManager(globalSettings.managerContract);
+            const txs = await signTransactionsPackage([tx]);
+            await broadcastAndWaitTxs(txs);
+            closeModal();
+        } catch (e) {
+            setErrorVote(true);
+        }
+        setIsLoading(false);
+    }, [setErrorVote, setIsLoading, closeModal, signTransactionsPackage, globalSettings.managerContract]);
+
+    return {isAdmin, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, activateManager, errorPk, errorVote, iAmNewManager};
 }

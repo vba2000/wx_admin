@@ -484,6 +484,10 @@ export const adminVoteForNewManager = (managerPk, managerContract) => {
     return createKeeperInvokeForKeeper(managerContract, 'voteForNewManager' , [{ value: managerPk, type: 'string' }]);
 };
 
+export const activateNewManager = (managerContract) => {
+    return createKeeperInvokeForKeeper(managerContract, 'activateManager' , []);
+};
+
 export const setFactoryDataTransaction = (pool, globalSettings, data) => {
 
     let {poolSwapFee, matcherSwapFee} = data || {};

@@ -1,5 +1,4 @@
 import {Button, Col, Container, Form, FormGroup, InputGroup, Row} from "react-bootstrap";
-import {InputWithDecimals} from "../../../components/InputWithDecimals";
 import React, {useCallback, useState} from "react";
 
 
