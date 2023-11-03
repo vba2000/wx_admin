@@ -1,6 +1,6 @@
 import {Container, Alert, Button} from "react-bootstrap";
 import {useContext} from "react";
-import {DataContext} from "../../context/Data";
+import {DataContext} from "../context/Data";
 
 
 export const LoadingError = (params) => {

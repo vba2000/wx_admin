@@ -41,7 +41,7 @@ export const checkNodeNetworkByte = async (user) => {
 
 const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
 
-const assetsStore = {'WAVES': {ticker: 'WAVES', decimals: 8}};
+const assetsStore = {'WAVES': { assetId: 'WAVES',  ticker: 'WAVES', name: 'WAVES', decimals: 8}};
 const getDataState = async (address) => {
     const url = `${node}addresses/data/${address}`;
     const data = await fetch(url).then(res => res.json());
@@ -219,6 +219,7 @@ export const statusToText = (status) => {
 };
 const parseAssetStore = (assetStore) => {
     const assetStoreData = {};
+    const notUsed = [];
     assetStore.forEach(({key, value}) => {
         const splited = key.split('__');
         switch (true) {
@@ -244,11 +245,16 @@ const parseAssetStore = (assetStore) => {
                 assetStoreData[assetId] = assetStoreData[assetId] || {};
                 assetStoreData[assetId].ticker = value;
                 break;
+            case key.includes('%s%s__assetName'):
+                assetStoreData[splited[2]] = assetStoreData[splited[2]] || {};
+                assetStoreData[splited[2]].assetName = value;
+                break;
             default:
-
+                notUsed.push([key, value]);
         }
-
     });
+
+    console.log('Asset', notUsed);
 
     return assetStoreData;
 }
@@ -357,7 +363,7 @@ const parsePools = (factoryDataState) => {
                 break;
 
 
-            case key === '%s%s__poolAssetMinAmount':
+            case key.includes('%s%s__poolAssetMinAmount'):
                 const [, , asset] = key.split('__');
                 globalSettings.assetsMinAmount[asset] = value;
                 break;
@@ -396,7 +402,7 @@ const parsePools = (factoryDataState) => {
         return acc;
     }, {});
 
-    console.log(notUsed);
+    console.log('Factory', notUsed);
 
     return {poolsData, globalSettings};
 }
