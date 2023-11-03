@@ -75,6 +75,7 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
                     <OnOffSm value={showHaveTicker} onChange={setShowHaveTicker}/>
                 </FormGroup>
             </Col>
+            {props.children}
         </Row>
         <Row><hr/></Row>
     </Container>

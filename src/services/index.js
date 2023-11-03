@@ -367,6 +367,9 @@ const parsePools = (factoryDataState) => {
                 const [, , asset] = key.split('__');
                 globalSettings.assetsMinAmount[asset] = value;
                 break;
+            case key.includes('%s__poolAssetDefaultMinAmount'):
+                globalSettings.poolAssetDefaultMinAmount = value;
+                break;
             case key === '%s__swapFeeDefault':
                 alert('Do not forget');
                 break;
@@ -401,7 +404,6 @@ const parsePools = (factoryDataState) => {
         }
         return acc;
     }, {});
-
     console.log('Factory', notUsed);
 
     return {poolsData, globalSettings};

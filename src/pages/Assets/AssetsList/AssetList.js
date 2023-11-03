@@ -5,6 +5,7 @@ import {UserContext} from "../../../context/WavesKeeper";
 import {AssetHeader} from "./AssetHeader";
 import {FilterList} from "./FilterList";
 import {AssetForm} from "./AssetForm";
+import {DefaultMinAmount} from "./DefaultMinAmount";
 
 
 export const AssetList = (params) => {
@@ -19,7 +20,7 @@ export const AssetList = (params) => {
         }
 
         const assetsList = Object.values(Object.entries(assets)
-            .map(([id, asset]) => ({ ...asset, assetsMinAmount: globalPoolsSettings.assetsMinAmount[id] }))
+            .map(([id, asset]) => ({...asset, assetsMinAmount: globalPoolsSettings.assetsMinAmount[id]}))
             .reduce((acc, item) => {
                 acc[item.id] = item
                 return acc;
@@ -31,7 +32,8 @@ export const AssetList = (params) => {
     const [listToRender, setListToRender] = useState([]);
 
     return <Col className="m-2" hidden={isLoadingData || hasError}>
-        <Row><FilterList list={assetList} setFilteredList={setListToRender}/></Row>
+        <Row><FilterList list={assetList} setFilteredList={setListToRender}><DefaultMinAmount
+            poolAssetDefaultMinAmount={globalPoolsSettings.poolAssetDefaultMinAmount} isAdmin={isManger}/></FilterList></Row>
         <Accordion activeKey={!isManger ? "no" : undefined}>
             {
                 listToRender.map(asset =>
