@@ -1,7 +1,6 @@
 import {Accordion, Col, Container, Row} from "react-bootstrap";
 import {IconLogo} from "../../../components/SvgString";
-import {useCallback, useContext, useMemo, useState} from "react";
-import {DataContext} from "../../../context/Data";
+import {useCallback, useContext, useMemo} from "react";
 import {copyTextToClipboard} from "../../../services/Copy";
 import {ToastContext} from "../../../components/Toasts";
 
@@ -20,10 +19,18 @@ export const AssetHeader = ({assetData, ...props}) => {
         return assetsMinAmount / 10 ** asset.decimals;
     }, [assetsMinAmount, asset]);
 
-    return <Accordion.Header>
+    const {addNewMessage} = useContext(ToastContext);
+    const onClick = useCallback((e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        copyTextToClipboard(asset.assetId);
+        addNewMessage({ text: `Asset id ${asset.assetId} was copied`, timeout: 1000, variant: 'light' })
+    }, [asset, addNewMessage]);
+
+    return <Accordion.Header title={asset.assetId}>
         <Container>
             <Row>
-                <Col className="align-middle my-2"><IconLogo width={32} height={32} svgString={logo}/></Col>
+                <Col className="align-middle my-2"><IconLogo width={32} height={32} svgString={logo} onClick={onClick}/></Col>
                 <Col className="my-2">
                     <Row><small className="lab}el label-primary text-nowrap">Ticker</small></Row>
                     <Row><small className="text-muted">{

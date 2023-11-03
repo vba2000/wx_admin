@@ -19,7 +19,7 @@ export const AssetList = (params) => {
         }
 
         const assetsList = Object.values(Object.entries(assets)
-            .map(([id, asset]) => ({ ... asset, assetsMinAmount: globalPoolsSettings.assetsMinAmount[id] }))
+            .map(([id, asset]) => ({ ...asset, assetsMinAmount: globalPoolsSettings.assetsMinAmount[id] }))
             .reduce((acc, item) => {
                 acc[item.id] = item
                 return acc;
