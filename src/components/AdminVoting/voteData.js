@@ -1,5 +1,11 @@
 import {useCallback, useMemo, useState} from "react";
-import {activateNewManager, adminVoteForNewManager, broadcastAndWaitTxs, checkPublicKey} from "../../services";
+import {
+    activateNewManager,
+    adminVoteForNewManager,
+    broadcastAndWaitTxs,
+    checkPublicKey,
+    editAdmins
+} from "../../services";
 
 
 export const useVoteData = (user, globalSettings, closeModal, signTransactionsPackage) => {
@@ -7,6 +13,8 @@ export const useVoteData = (user, globalSettings, closeModal, signTransactionsPa
     const hasNewVote = useMemo(() => {
         return !!globalSettings.pendingManager && globalSettings.pendingManager !== globalSettings.manager;
     }, [globalSettings.pendingManager, globalSettings.manager]);
+
+    const isManager = useMemo(() => globalSettings.manager === user, [globalSettings.manager, user]);
 
     const iAmNewManager = useMemo(() => globalSettings.pendingManager && user === globalSettings.pendingManager, [user, globalSettings.pendingManager]);
 
@@ -54,5 +62,24 @@ export const useVoteData = (user, globalSettings, closeModal, signTransactionsPa
         setIsLoading(false);
     }, [setErrorVote, setIsLoading, closeModal, signTransactionsPackage, globalSettings.managerContract]);
 
-    return {isAdmin, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, activateManager, errorPk, errorVote, iAmNewManager};
+    const setAdmins = useCallback(async (newAdmin, toDelete) => {
+        setErrorVote(false);
+        setIsLoading(true);
+        if (!isManager) {
+            setErrorVote(true);
+            setIsLoading(false);
+        }
+
+        try {
+            const txs = await signTransactionsPackage(editAdmins(globalSettings.managerContract, newAdmin, toDelete));
+            await broadcastAndWaitTxs(txs);
+            setIsLoading(false);
+        } catch (e) {
+            setErrorVote(true);
+        }
+        setIsLoading(false);
+
+    }, [setErrorVote, setIsLoading, isManager, globalSettings.managerContract, signTransactionsPackage]);
+
+    return {isAdmin, isManager, setAdmins, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, activateManager, errorPk, errorVote, iAmNewManager};
 }

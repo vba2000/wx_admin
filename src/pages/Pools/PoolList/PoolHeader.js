@@ -51,10 +51,10 @@ export const PoolHeader = ({poolData, ...props}) => {
         wxEmission,
         skipValidation,
         poolWeight,
-        ordersNumber,
+        ordersNumber = 20,
         amp,
-        stepSize,
-        profitIncrease,
+        stepSize = 1000000,
+        profitIncrease = 1000000,
     } = poolData;
     const {logo = ""} = assets[LPAssetId] || {};
     const swap = !swapDisable;
