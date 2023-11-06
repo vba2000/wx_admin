@@ -32,10 +32,35 @@ export const setMainnet = () => {
 
 export const checkNodeNetworkByte = async (user) => {
     // const { generator } =  await fetch(`${node}blocks/headers/last`).then(r => r.json());
-    const current = String.fromCharCode(libs.crypto.base58Decode(user)[1]);
+    const bytes = libs.crypto.base58Decode(user);
+    const current = String.fromCharCode(bytes[1]);
     if (current !== byte) {
         throw new Error(`Incorrect network for user ${user}!`);
     }
+};
+
+export const checkAddress = (user) => {
+    if (!user) {
+        return null;
+    }
+    try {
+        const bytes = libs.crypto.base58Decode(user);
+        const current = String.fromCharCode(bytes[1]);
+        if (bytes.length !== 26) {
+            return 'Incorrect Address';
+        }
+        if (current !== byte) {
+            return `Incorrect network for user ${user}!`;
+        }
+
+        if (!libs.crypto.verifyAddress(user, { chainId: byte })) {
+            return `Incorrect user ${user}!`;
+        }
+    } catch (e) {
+        return  'Incorrect base58';
+    }
+
+    return null;
 };
 
 
@@ -486,6 +511,20 @@ export const adminVoteForNewManager = (managerPk, managerContract) => {
 
 export const activateNewManager = (managerContract) => {
     return createKeeperInvokeForKeeper(managerContract, 'activateManager' , []);
+};
+
+export const editAdmins = (managerContract, newAdmin, toDelete) => {
+    const txs = [];
+
+    Object.entries(toDelete).forEach(admin => {
+        txs.push(createKeeperInvokeForKeeper(managerContract, 'removeAdmin', [{ type: 'string', value: admin }]));
+    });
+
+    if (newAdmin) {
+        txs.push(createKeeperInvokeForKeeper(managerContract, 'addNewAdmin', [{ type: 'string', value: newAdmin }]));
+    }
+
+    return txs;
 };
 
 export const setFactoryDataTransaction = (pool, globalSettings, data) => {

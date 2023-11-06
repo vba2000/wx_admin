@@ -28,7 +28,7 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
                return false;
            }
 
-           if (byAsset && (!item.ticker || (!item.ticker.includes(byAsset.toUpperCase()) && !item.asset.assetId.toLowerCase().includes(byAsset.toLowerCase())))) {
+           if (byAsset && (!item.ticker || (!item.ticker.toUpperCase().includes(byAsset.toUpperCase()) && !item.asset.assetId.toLowerCase().includes(byAsset.toLowerCase())))) {
                return false;
            }
 
