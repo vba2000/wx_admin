@@ -4,9 +4,9 @@ import {useCallback, useMemo, useState} from "react";
 import {checkAddress} from "../../services";
 
 
-const AdminItem = ({admin, toDelete, isLoading, isManager, ...props}) => {
+const AdminItem = ({admin, toDelete, isLoading, isAdmin, ...props}) => {
     const isToDelete = toDelete[admin];
-    return <Row style={{cursor: isManager ? 'pointer' : undefined, color: isToDelete ? 'red' : 'green'}}>
+    return <Row style={{cursor: isAdmin ? 'pointer' : undefined, color: isToDelete ? 'red' : 'green'}}>
         <Col md={11}>
             {isToDelete ? <del>{admin}</del> : admin}
         </Col>
@@ -53,7 +53,7 @@ export const AdminListModal = ({show, closeModal, globalSettings, user, signTran
 
 
     const {
-        isManager,
+        isAdmin,
         isLoading,
         setAdmins,
     } = useVoteData(user, globalSettings, closeModal, signTransactionsPackage);
@@ -65,7 +65,7 @@ export const AdminListModal = ({show, closeModal, globalSettings, user, signTran
     const onAdminClick = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!isManager) {
+        if (!isAdmin) {
             return;
         }
         const user = e.currentTarget.getAttribute('ids');
@@ -75,7 +75,7 @@ export const AdminListModal = ({show, closeModal, globalSettings, user, signTran
             delete toDelete[user];
         }
         setToDelete({...toDelete});
-    }, [setToDelete, toDelete, isManager]);
+    }, [setToDelete, toDelete, isAdmin]);
 
 
     return <Modal show={show} onHide={isLoading ? undefined : closeModal} centered>
@@ -87,11 +87,11 @@ export const AdminListModal = ({show, closeModal, globalSettings, user, signTran
                 {
                     (globalSettings.admins || []).map(admin => <ListGroup.Item onClick={onAdminClick} ids={admin}
                                                                                key={admin}>
-                        <AdminItem admin={admin} isManager={isManager} toDelete={toDelete}/>
+                        <AdminItem admin={admin} isAdmin={isAdmin} toDelete={toDelete}/>
                     </ListGroup.Item>)
                 }
                 {
-                    isManager && <AddNewAdmin newAdmin={newAdmin} setNewAdmin={onChangeAdmin} hasError={newAdminError}/>
+                    isAdmin && <AddNewAdmin newAdmin={newAdmin} setNewAdmin={onChangeAdmin} hasError={newAdminError}/>
                 }
             </ListGroup>
         </Modal.Body>

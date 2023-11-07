@@ -221,7 +221,6 @@ export const getPoolsData = async () => {
     assets.forEach((asset) => {
         assetStore[asset.assetId] = assetStore[asset.assetId] || {};
         assetStore[asset.assetId].asset = asset;
-        assetStore[asset.assetId].ticker = assetStore[asset.assetId].ticker || asset.name;
         assetStore[asset.assetId].id = asset.assetId;
     })
 
@@ -470,7 +469,7 @@ const parseConfig = (data) => {
 export const convertSvgString = (svgString) => {
     const base64Img = window.btoa(unescape(encodeURIComponent(svgString)));
     return base64Img;
-}
+};
 
 export const createKeeperInvokeForKeeper = (dApp, func, args, payment) => {
     return {
