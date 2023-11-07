@@ -38,7 +38,6 @@ export const AdminVoting = ({isAdmin, globalSettings, user, signTransactionsPack
     }, [setIsShowUserList]);
 
 
-
     const stopPropagation = useCallback((ev) => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -63,7 +62,8 @@ export const AdminVoting = ({isAdmin, globalSettings, user, signTransactionsPack
                      signTransactionsPackage={signTransactionsPackage}/>
         <ActivateModal show={isShowActivateModal} closeModal={closeActivateModal} globalSettings={globalSettings}
                        user={user} signTransactionsPackage={signTransactionsPackage}/>
-        <AdminListModal closeModal={closeUserListeModal} user={user} globalSettings={globalSettings} show={isShowUserList}/>
+        <AdminListModal closeModal={closeUserListeModal} user={user} globalSettings={globalSettings}
+                        signTransactionsPackage={signTransactionsPackage} show={isShowUserList}/>
         {children}
     </Col>;
 };

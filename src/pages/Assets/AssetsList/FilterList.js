@@ -16,6 +16,9 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
 
     useEffect(() => {
         const newList = list.filter(item => {
+
+            let ticker = item.ticker || item.assetName || item.asset.name;
+
            if (showDelisted && !!item.labels) {
                return false;
            }
@@ -28,7 +31,7 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
                return false;
            }
 
-           if (byAsset && (!item.ticker || (!item.ticker.toUpperCase().includes(byAsset.toUpperCase()) && !item.asset.assetId.toLowerCase().includes(byAsset.toLowerCase())))) {
+           if (byAsset && (!ticker || (!ticker.toUpperCase().includes(byAsset.toUpperCase()) && !item.asset.assetId.toLowerCase().includes(byAsset.toLowerCase())))) {
                return false;
            }
 
@@ -39,7 +42,7 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
 
 
     return <Container>
-        <Row>
+        <Row className='mb-2'>
             <Col sm={4} md={4} lg={3} xl={2} xxl={2} className="">
                 <Form.Text muted >Search by asset</Form.Text>
                 <FormGroup>
@@ -70,7 +73,7 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
                 </FormGroup>
             </Col>
             <Col md={2} xs={6}>
-                <Form.Text muted>No icker</Form.Text>
+                <Form.Text muted>No Ticker</Form.Text>
                 <FormGroup>
                     <OnOffSm value={showHaveTicker} onChange={setShowHaveTicker}/>
                 </FormGroup>
