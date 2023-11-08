@@ -102,11 +102,22 @@ const getAdminsData = async (managerContract) => {
                 acc.pendingManagerPublicKey = value;
                 acc.pendingManager = pubKeyToAddress(value);
                 break;
+            case key.includes('%s%s%s__removeAdmin__'):
+                const [,,admin] = key.split('__');
+                acc.adminsToDelete[admin] = (acc.adminsToDelete[admin] || 0) + 1;
+                break;
+            case key.includes('%s%s%s__addAdmin__'):
+                const [,,admin2] = key.split('__');
+                acc.adminsToAdd[admin2] = (acc.adminsToAdd[admin2] || 0) + 1;
+                break;
             default:
+                acc.noUse.push([key, value])
         }
 
         return acc;
-    }, {});
+    }, { noUse: [], adminsToDelete: {}, adminsToAdd: {} });
+
+    console.log('Manage', adminData.noUse);
 
     return adminData;
 }
@@ -178,7 +189,7 @@ const createPoll = (func, times = 10, delta = 1000) => {
 export const broadcastAndWaitTxs = (txs, progress = (p) => p) => {
     txs = Array.isArray(txs) ? txs : [txs];
     progress(0);
-    return txs.reduce((acc, tx, currentIndex) => {
+    return txs.reduce(async (acc, tx, currentIndex) => {
         if (!tx) {
             return acc;
         }
@@ -515,7 +526,7 @@ export const activateNewManager = (managerContract) => {
 export const editAdmins = (managerContract, newAdmin, toDelete) => {
     const txs = [];
 
-    Object.entries(toDelete).forEach(admin => {
+    Object.keys(toDelete).forEach(admin => {
         txs.push(createKeeperInvokeForKeeper(managerContract, 'removeAdmin', [{ type: 'string', value: admin }]));
     });
 

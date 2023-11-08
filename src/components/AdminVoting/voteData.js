@@ -40,7 +40,7 @@ export const useVoteData = (user, globalSettings, closeModal, signTransactionsPa
         try {
             const tx = adminVoteForNewManager(newAdmin, globalSettings.managerContract);
             const txs = await signTransactionsPackage([tx]);
-            await broadcastAndWaitTxs(txs);
+            const data = await broadcastAndWaitTxs(txs);
             closeModal();
         } catch (e) {
             setErrorVote(true);
@@ -65,21 +65,22 @@ export const useVoteData = (user, globalSettings, closeModal, signTransactionsPa
     const setAdmins = useCallback(async (newAdmin, toDelete) => {
         setErrorVote(false);
         setIsLoading(true);
-        if (!isManager) {
-            setErrorVote(true);
-            setIsLoading(false);
-        }
 
         try {
             const txs = await signTransactionsPackage(editAdmins(globalSettings.managerContract, newAdmin, toDelete));
-            await broadcastAndWaitTxs(txs);
+            const data = await broadcastAndWaitTxs(txs);
             setIsLoading(false);
+            if (!txs) {
+                throw new Error('Keeper Rejected');
+            }
+            return data;
         } catch (e) {
-            setErrorVote(true);
+            const err = await e;
+            setErrorVote(err);
+            throw err;
         }
-        setIsLoading(false);
 
     }, [setErrorVote, setIsLoading, isManager, globalSettings.managerContract, signTransactionsPackage]);
 
-    return {isAdmin, isManager, setAdmins, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, activateManager, errorPk, errorVote, iAmNewManager};
+    return {setErrorVote, isAdmin, isManager, setAdmins, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, activateManager, errorPk, errorVote, iAmNewManager};
 }
