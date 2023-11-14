@@ -31,9 +31,9 @@ export const PoolListFilters = ({setPoolList, ...props}) => {
         } else if (filters.priceAsset !== '*' && filters.priceAsset !== pool.priceAssetId) {
             return false;
         } else if (filters.search) {
-            const amountName = assets[pool.amountAssetId]?.ticker;
-            const priceName = assets[pool.priceAssetId]?.ticker;
-            const poolName = `${amountName || 'no name'}/${priceName || 'no'}`.toLowerCase();
+            const amountName = assets[pool.amountAssetId]?.ticker || assets[pool.amountAssetId]?.assetName || assets[pool.amountAssetId]?.asset.name;
+            const priceName = assets[pool.priceAssetId]?.ticker || assets[pool.priceAssetId]?.assetName  || assets[pool.priceAssetId]?.asset.name;
+            const poolName = `${amountName || 'no name'}/${priceName || 'no name'}`.toLowerCase();
             if (!poolName.includes(filters.search.toLowerCase())) {
                 return false;
             }

@@ -60,8 +60,8 @@ export const PoolHeader = ({poolData, ...props}) => {
     const swap = !swapDisable;
     const oneTkn = !oneTokenDisable;
     const poolSwapFeeFull = swapFee || globalPoolsSettings.swapFee;
-    const amountName = assets[amountAssetId]?.ticker || assets[amountAssetId]?.assetName;
-    const priceName = assets[priceAssetId]?.ticker || assets[priceAssetId]?.assetName;
+    const amountName = assets[amountAssetId]?.ticker || assets[amountAssetId]?.assetName || assets[amountAssetId]?.asset.name;
+    const priceName = assets[priceAssetId]?.ticker || assets[priceAssetId]?.assetName  || assets[priceAssetId]?.asset.name;
     const poolName = `${amountName || 'no name'}/${priceName || 'no'}`
 
 

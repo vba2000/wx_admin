@@ -8,7 +8,7 @@ import {UserContext} from "../../../context/WavesKeeper";
 
 
 export const PoolList = (params) => {
-    const { isLoadingData, hasError, globalPoolsSettings } = useContext(DataContext);
+    const { isLoadingData, hasError, globalPoolsSettings, assets } = useContext(DataContext);
     const {user} = useContext(UserContext);
     const [poolsList, setPoolList] = useState([]);
     const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
@@ -18,7 +18,7 @@ export const PoolList = (params) => {
         <Accordion>
             {poolsList.map(([, pool]) =>
                 (<Accordion.Item eventKey={pool.address} key={pool.address} className="m-0">
-                    <PoolHeader poolData={pool}/>
+                    <PoolHeader poolData={pool} assets={assets}/>
                     <Accordion.Body className={"bg-light"}>
                         <PoolForm pool={pool} isManager={isManger}/>
                     </Accordion.Body>
