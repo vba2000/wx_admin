@@ -40,16 +40,22 @@ export const AssetForm = ({asset, ...props}) => {
         if ((img.value && !asset.logo) || (!img.value && asset.logo) || (asset.logo && img.value !== `data:image/svg+xml;base64, ${convertSvgString(asset.logo)}`)) {
             diff.logo = img.value;
             hasDiff = true;
+        } else {
+            delete diff.logo;
         }
 
         if ((asset.assetsMinAmount || null) !== (minAmount || null)) {
             diff.assetsMinAmount = minAmount;
             hasDiff = true;
+        } else {
+            delete diff.assetsMinAmount;
         }
 
         if ((asset.ticker || null) !== (ticker || null)) {
             diff.ticker = ticker;
             hasDiff = true;
+        } else {
+            delete diff.ticker;
         }
 
         return { diff, hasDiff };

@@ -1,4 +1,4 @@
-import {Alert, Button, Col, Form, FormGroup, Row} from "react-bootstrap";
+import {Alert, Button, Col, Container, Form, FormGroup, Row} from "react-bootstrap";
 import {useCallback, useMemo, useState} from "react";
 import {OnOffSm} from "../../../components/OnOff";
 import {InputWithDecimals} from "../../../components/InputWithDecimals";
@@ -19,7 +19,36 @@ const selectClassName = (status) => {
     }
 }
 
-export const PoolForm = ({pool, ...props}) => {
+export const PoolForm = ({pool, isManager, ...props}) => {
+    if (isManager) {
+        return <PoolFormMangaer pool={pool}/>;
+    }
+    return <PoolInfo pool={pool}/>;
+};
+
+export const PoolInfo = ({pool, ...props}) => {
+    const { address, LPAssetId, amountAssetId, priceAssetId, type } = pool;
+
+    return <Container>
+        <Row>
+            <Col md={2}><Form.Text muted>Pool type</Form.Text></Col><Col><small>{type === 'STBLPOOL' ? 'Stable' : 'Uni'}</small></Col>
+        </Row>
+        <Row>
+            <Col md={2}><Form.Text muted>Pool address</Form.Text></Col><Col><small>{address}</small></Col>
+        </Row>
+        <Row>
+            <Col md={2}><Form.Text muted>Amount Asset</Form.Text></Col><Col><small>{amountAssetId}</small></Col>
+        </Row>
+        <Row>
+            <Col md={2}><Form.Text muted>Price Asset</Form.Text></Col><Col><small>{priceAssetId}</small></Col>
+        </Row>
+        <Row>
+            <Col md={2}><Form.Text muted>Lp Asset</Form.Text></Col><Col><small>{LPAssetId}</small></Col>
+        </Row>
+    </Container>;
+};
+
+export const PoolFormMangaer = ({pool, ...props}) => {
 
     const [status, setStatus] = useState(pool.status || 1);
     const onStatusChange = useCallback((event) => {
@@ -112,7 +141,7 @@ export const PoolForm = ({pool, ...props}) => {
     const showModal = useCallback(() => setSaveModalShow(true), []);
     const hideModal = useCallback(() => setSaveModalShow(false), []);
 
-    return <Alert variant="light" className={`m-0 ${ diff ? 'border-danger' : ''}`}>
+    return <Alert variant="light" className={`m-0 ${diff ? 'border-danger' : ''}`}>
         <Row>
             <Col md={4} xs={6}>
                 <FormGroup style={{minWidth: '180px', maxWidth: "200px"}}>
@@ -157,31 +186,36 @@ export const PoolForm = ({pool, ...props}) => {
             <Col lg={2} xs={6}>
                 <Form.Text muted>Spread %</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={false} value={spread} onChange={setSpread} decimals={6} placeholder={0}/>
+                    <InputWithDecimals hasDefault={false} value={spread} onChange={setSpread} decimals={6}
+                                       placeholder={0}/>
                 </FormGroup>
             </Col>
             <Col lg={2} xs={6}>
-                <Form.Text  muted>On Tkn In %</Form.Text>
+                <Form.Text muted>On Tkn In %</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={true} value={feeInOneTkn} onChange={setFeeInOneTkn} decimals={6} placeholder={0}/>
+                    <InputWithDecimals hasDefault={true} value={feeInOneTkn} onChange={setFeeInOneTkn} decimals={6}
+                                       placeholder={0}/>
                 </FormGroup>
             </Col>
             <Col lg={2} xs={6}>
                 <Form.Text muted>One Tkn Out %</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={true} value={feeOutOneTkn} onChange={setFeeOutOneTkn} decimals={6} placeholder={0}/>
+                    <InputWithDecimals hasDefault={true} value={feeOutOneTkn} onChange={setFeeOutOneTkn} decimals={6}
+                                       placeholder={0}/>
                 </FormGroup>
             </Col>
             <Col lg={2} xs={6}>
                 <Form.Text muted>Swap Pool Fee %</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={true} value={poolSwapFee} onChange={setPoolSwapFee} decimals={6} placeholder={0}/>
+                    <InputWithDecimals hasDefault={true} value={poolSwapFee} onChange={setPoolSwapFee} decimals={6}
+                                       placeholder={0}/>
                 </FormGroup>
             </Col>
             <Col lg={2} xs={6}>
                 <Form.Text muted>Swap Matcher fee %</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={true} value={matcherSwapFee} onChange={setMatcherSwapFee} decimals={6} placeholder={0}/>
+                    <InputWithDecimals hasDefault={true} value={matcherSwapFee} onChange={setMatcherSwapFee}
+                                       decimals={6} placeholder={0}/>
                 </FormGroup></Col>
         </Row>
         <hr/>
@@ -189,22 +223,25 @@ export const PoolForm = ({pool, ...props}) => {
             <Col lg={2} xs={6}>
                 <Form.Text muted>Orders Number</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals  hasDefault={false} value={ordersNumber} onChange={setOrdersNumber} decimals={0} placeholder={20}/>
+                    <InputWithDecimals hasDefault={false} value={ordersNumber} onChange={setOrdersNumber} decimals={0}
+                                       placeholder={20}/>
                 </FormGroup>
             </Col>
             <Col lg={2} xs={6}>
-                <Form.Text  muted>Step Size</Form.Text>
+                <Form.Text muted>Step Size</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={true} value={stepSize} onChange={setStepSize} decimals={6} placeholder={1}/>
+                    <InputWithDecimals hasDefault={true} value={stepSize} onChange={setStepSize} decimals={6}
+                                       placeholder={1}/>
                 </FormGroup>
             </Col>
             <Col lg={2} xs={6}>
                 <Form.Text muted>Profit</Form.Text>
                 <FormGroup>
-                    <InputWithDecimals hasDefault={true} value={profitIncrease} onChange={setProfitIncrease} decimals={6} placeholder={1}/>
+                    <InputWithDecimals hasDefault={true} value={profitIncrease} onChange={setProfitIncrease}
+                                       decimals={6} placeholder={1}/>
                 </FormGroup>
             </Col>
-            { amp !== null && <Col lg={2} xs={6}>
+            {amp !== null && <Col lg={2} xs={6}>
                 <Form.Text muted>Leverage</Form.Text>
                 <FormGroup>
                     <InputWithDecimals hasDefault={false} value={amp} onChange={setAmp} decimals={0} placeholder={50}/>
@@ -219,10 +256,12 @@ export const PoolForm = ({pool, ...props}) => {
         <hr/>
         <Row>
             <Col className="text-end">
-                <Button disabled={!diff} className={"w-50"} variant={"outline-success"} size={"sm"} onClick={showModal}>Save pool changes</Button>
+                <Button disabled={!diff} className={"w-50"} variant={"outline-success"} size={"sm"} onClick={showModal}>Save
+                    pool changes</Button>
             </Col>
             <Col>
-                <Button className={"w-50"} variant={"outline-danger"} size={"sm"} onClick={clearChangesCb}>Clear changes</Button>
+                <Button className={"w-50"} variant={"outline-danger"} size={"sm"} onClick={clearChangesCb}>Clear
+                    changes</Button>
             </Col>
         </Row>
         <SavePoolDataModal pool={pool} data={diff} hideModal={hideModal} isShow={saveModalShow}/>

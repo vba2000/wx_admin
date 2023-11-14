@@ -592,3 +592,4 @@ export const setFactoryDataTransaction = (pool, globalSettings, data) => {
         },
     } : null;
 };
+

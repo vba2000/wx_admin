@@ -15,12 +15,12 @@ export const PoolList = (params) => {
 
     return<Col className="m-2" hidden={isLoadingData || hasError}>
         <PoolListFilters setPoolList={setPoolList}/>
-        <Accordion activeKey={!isManger ? "no" : undefined}>
+        <Accordion>
             {poolsList.map(([, pool]) =>
                 (<Accordion.Item eventKey={pool.address} key={pool.address} className="m-0">
                     <PoolHeader poolData={pool}/>
                     <Accordion.Body className={"bg-light"}>
-                        <PoolForm pool={pool}/>
+                        <PoolForm pool={pool} isManager={isManger}/>
                     </Accordion.Body>
                 </Accordion.Item>))
             }

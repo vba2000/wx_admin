@@ -1,4 +1,4 @@
-import {Button, Form, Image, InputGroup} from "react-bootstrap";
+import {Button, Container, Form, Image, InputGroup, Row} from "react-bootstrap";
 import {getIconFromFileEvent} from "../../services/imageUtils";
 import {useCallback, useState} from "react";
 import {convertSvgString} from "../../services";
@@ -26,20 +26,33 @@ export const ImgInput = ({img, setImg, currentImage, ...props}) => {
         setImg({
             value: currentImage ? `data:image/svg+xml;base64, ${convertSvgString(currentImage)}` : '',
             name: 'Current',
-            size: 0 })
+            size: 0
+        })
     }, [setFile, currentImage, setImg]);
 
-    return <Form.Group  controlId="Upload_logo" style={{ width: '256px' }}>
+    return <Form.Group controlId="Upload_logo" style={{width: '256px'}}>
         <InputGroup className='text-nowrap'>
-            <Form.Control type="file"
-                          onChange={onChange}
-                          value={file}
-                          size={' '}
-                          title={'Select logo'}
-                          style={{ content: 'Upload', width: '100px' }}
-            />
-            <InputGroup.Text style={{width: '50px', cursor: 'pointer'}}>{ img.value ? <Image width={32} style={{width: '32px', borderRadius: '50%'}} src={img.value} onClick={clear}/> : 'N/A' }</InputGroup.Text>
-            <InputGroup.Text>{img.size} B</InputGroup.Text>
+            <InputGroup.Text as='a'  className={"border-success"} style={{overflow: 'hidden', position: "relative", cursor: 'pointer', padding: 0, margin: 0}}>
+                     <small className={"btn bi bi-upload tooltip-arrow"} size={'sm'}/>
+                     <input
+                        type="file"
+                        onChange={onChange}
+                        value={file}
+                        title={'Select logo'}
+                        style={{
+                            position: "absolute",
+                            left: 0,
+                            top: 0,
+                            opacity: 0,
+                            zIndex: 3,
+                            fontSize: '100px'
+                        }}
+                    />
+            </InputGroup.Text>
+            <InputGroup.Text className={'py-0 bg-body-secondary  border-dark-subtle'} style={{width: '50px', cursor: 'pointer'}}>{ img.value ?
+                <Image width={32} height={32} style={{width: '32px', height: '32px', borderRadius: '50%'}} src={img.value}
+                       onClick={clear}/> : 'N/A'}</InputGroup.Text>
+            <InputGroup.Text className={'bg-body-secondary border-dark-subtle'}>{img.size} B</InputGroup.Text>
             <Button variant="outline-danger" onClick={deleteImg}>✘</Button>
         </InputGroup>
     </Form.Group>
