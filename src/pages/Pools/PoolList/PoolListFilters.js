@@ -2,6 +2,9 @@ import { Col, Form, InputGroup, Row} from "react-bootstrap";
 import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {DataContext} from "../../../context/Data";
 
+function getTicker(asset) {
+    return asset.ticker || asset.assetName || asset.asset.name;
+}
 
 export const PoolListFilters = ({setPoolList, ...props}) => {
 
@@ -19,8 +22,8 @@ export const PoolListFilters = ({setPoolList, ...props}) => {
             hasPrice[priceAssetId] = assets[priceAssetId];
         });
 
-        const amountAssets = Object.values(hasAmount).filter(Boolean).sort(((a, b) => a.ticker > b.ticker ? 1 : a.ticker === b.ticker ? 0 : -1));
-        const priceAssets = Object.values(hasPrice).filter(Boolean).sort(((a, b) => a.ticker > b.ticker ? 1 : a.ticker === b.ticker ? 0 : -1));
+        const amountAssets = Object.values(hasAmount).filter(Boolean).sort(((a, b) => getTicker(a) > getTicker(b) ? 1 : getTicker(a) === getTicker(b) ? 0 : -1));
+        const priceAssets = Object.values(hasPrice).filter(Boolean).sort(((a, b) => getTicker(a) > getTicker(b) ? 1 : getTicker(a) === getTicker(b) ? 0 : -1));
         return {amountAssets, priceAssets};
     }, [assets, poolsList]);
 
@@ -96,8 +99,8 @@ export const PoolListFilters = ({setPoolList, ...props}) => {
                 <Form.Select size="sm" id="amountAssetDropDown" aria-describedby="amountAssetSelect"
                              onChange={setAmountAssetFilter}>
                     <option id="all-amount" value="*">All</option>
-                    {amountAssets.map(({id, ticker}) => <option key={`filter-${id}-amount`} id={`filter-${id}-amount`}
-                                                                value={id}>{ticker}</option>)}
+                    {amountAssets.map(({id, ...asset}) => <option key={`filter-${id}-amount`} id={`filter-${id}-amount`}
+                                                                value={id}>{getTicker(asset)}</option>)}
                 </Form.Select>
             </InputGroup>
         </Col>
@@ -108,8 +111,8 @@ export const PoolListFilters = ({setPoolList, ...props}) => {
                              onChange={setPriceAssetFilter}>
                     <option id="all-price" value="*">All</option>
                     {
-                        priceAssets.map(({id, ticker}) =>
-                            <option key={`filter-${id}-price`} id={`filter-${id}-price`} value={id}>{ticker}</option>
+                        priceAssets.map(({id, ...asset}) =>
+                            <option key={`filter-${id}-price`} id={`filter-${id}-price`} value={id}>{getTicker(asset)}</option>
                         )
                     }
                 </Form.Select>
