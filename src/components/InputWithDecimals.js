@@ -6,14 +6,13 @@ export const InputWithDecimals = ({ size, hasDefault = true, value, onChange, de
     const [currentValue, setCurrentValue] = useState(!hasDefault ? value / 10 ** decimals || 0 : value !== null ? value / 10 ** decimals : '');
 
     const onChangeValue = useCallback((event) => {
-
         if(event.target.value === '') {
             onChange(hasDefault ? null : 0);
             setCurrentValue('');
         } else if (!isNaN(Number(event.target.value))) {
             setCurrentValue(event.target.value);
 
-            const rawNum = (Number(event.target.value) * 10 ** decimals) << 0;
+            const rawNum = Math.floor(Number(event.target.value) * 10 ** decimals);
             if (value !== rawNum) {
                 onChange(rawNum);
             }

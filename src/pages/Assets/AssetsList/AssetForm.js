@@ -4,6 +4,7 @@ import React, {useCallback, useMemo, useState} from "react";
 import {InputWithDecimals} from "../../../components/InputWithDecimals";
 import {convertSvgString} from "../../../services";
 import {SaveAssetDataModal} from "./SaveAssetDataModal";
+import {getIconFromBase64} from "../../../services/imageUtils";
 
 
 export const AssetForm = ({asset, ...props}) => {
@@ -21,6 +22,12 @@ export const AssetForm = ({asset, ...props}) => {
         setTicker(e.target.value);
     }, [setTicker]);
 
+    const [externalTicker, setExternalTicker] = useState(asset.externalTicker || '');
+
+    const onExternalTickerChange = useCallback((e) => {
+        setExternalTicker(e.target.value);
+    }, [setExternalTicker]);
+
     const [minAmount, setMinAmount] = useState(asset.assetsMinAmount);
 
     const clearChanges = useCallback(() => {
@@ -29,23 +36,24 @@ export const AssetForm = ({asset, ...props}) => {
             name: 'Current',
             size: 0
         });
+        setExternalTicker(asset.externalTicker);
         setMinAmount(asset.assetsMinAmount);
         setTicker(asset.ticker || '');
-    }, [asset.assetsMinAmount, asset.logo, asset.ticker, setImg]);
+    }, [asset.assetsMinAmount, asset.logo, asset.ticker, setImg, asset.externalTicker]);
 
     const { diff, hasDiff } = useMemo(() => {
         const diff = {};
         let hasDiff = false;
 
         if ((img.value && !asset.logo) || (!img.value && asset.logo) || (asset.logo && img.value !== `data:image/svg+xml;base64, ${convertSvgString(asset.logo)}`)) {
-            diff.logo = img.value;
+            diff.logo = getIconFromBase64(img.value);
             hasDiff = true;
         } else {
             delete diff.logo;
         }
 
         if ((asset.assetsMinAmount || null) !== (minAmount || null)) {
-            diff.assetsMinAmount = minAmount;
+            diff.assetsMinAmount = Number(minAmount);
             hasDiff = true;
         } else {
             delete diff.assetsMinAmount;
@@ -58,8 +66,15 @@ export const AssetForm = ({asset, ...props}) => {
             delete diff.ticker;
         }
 
+        if ((asset.externalTicker || null) !== (externalTicker || null)) {
+            diff.externalTicker = externalTicker;
+            hasDiff = true;
+        } else {
+            delete diff.externalTicker;
+        }
+
         return { diff, hasDiff };
-    }, [asset.logo, asset.ticker, asset.assetsMinAmount, ticker, minAmount, img]);
+    }, [asset.logo, asset.ticker, asset.assetsMinAmount, asset.externalTicker, externalTicker, ticker, minAmount, img]);
 
     const [showSaveModal, setShowSaveModal] = useState(false);
     const hideModal = useCallback(() => setShowSaveModal(false), []);
@@ -75,6 +90,14 @@ export const AssetForm = ({asset, ...props}) => {
                     <InputGroup className='text-nowrap'>
                         <InputGroup.Text>Ticker</InputGroup.Text>
                         <Form.Control type={'text'} value={ticker} onInput={onTickerChange}/>
+                    </InputGroup>
+                </FormGroup>
+            </Col>
+            <Col>
+                <FormGroup>
+                    <InputGroup className='text-nowrap'>
+                        <InputGroup.Text>External Ticker</InputGroup.Text>
+                        <Form.Control type={'text'} value={externalTicker} onInput={onExternalTickerChange}/>
                     </InputGroup>
                 </FormGroup>
             </Col>

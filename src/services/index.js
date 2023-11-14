@@ -19,6 +19,7 @@ let {node, factory, byte, factoryPublicKey} = MAINNET;
 export const setTestnet = () => {
     node = TESTNET.node;
     factory = TESTNET.factory;
+    factoryPublicKey = TESTNET.factoryPublicKey;
     byte = TESTNET.byte;
     net = 'testnet';
 };
@@ -284,6 +285,10 @@ const parseAssetStore = (assetStore) => {
                 assetStoreData[splited[2]] = assetStoreData[splited[2]] || {};
                 assetStoreData[splited[2]].assetName = value;
                 break;
+            case key.includes('%s%s__assetId2external'):
+                assetStoreData[splited[2]] = assetStoreData[splited[2]] || {};
+                assetStoreData[splited[2]].externalTicker = value;
+                break;
             default:
                 notUsed.push([key, value]);
         }
@@ -304,6 +309,7 @@ const parsePools = (factoryDataState) => {
         poolSwapFee: 200000,
         swapFee: 400000,
         factoryContract: factory,
+        factoryPublicKey: factoryPublicKey,
         spread: 2000000,
         admins: [],
         manager: '',
@@ -370,6 +376,9 @@ const parsePools = (factoryDataState) => {
                 break;
             case key === '%s__assetsStoreContract':
                 globalSettings.assetStore = value;
+                break;
+            case key === '%s__assetStorePublicKey':
+                globalSettings.assetStorePublicKey = value;
                 break;
             case key === '%s__oneTokenOperationsDisabled':
                 globalSettings.oneTokenDisable = value;
@@ -593,3 +602,83 @@ export const setFactoryDataTransaction = (pool, globalSettings, data) => {
     } : null;
 };
 
+export const setAssetStorageDataTransaction = (diff, globalSettings, assetId) => {
+
+    const senderPublicKey = globalSettings.assetStorePublicKey;
+    const sender = globalSettings.assetStore;
+
+
+    const dataState = [];
+
+    if (diff.logo !== undefined) {
+        const isDelete = !diff.logo;
+        dataState.push({
+            key: `logo_<${assetId}>`,
+            value: isDelete ? null : diff.logo,
+            type: isDelete ? null : 'string'
+        });
+    }
+
+    if (diff.ticker !== undefined) {
+        const isDelete = !diff.ticker;
+        dataState.push({
+            key: `ticker_<${assetId}>`,
+            value: isDelete ? null : diff.ticker,
+            type: isDelete ? null : 'string'
+        });
+    }
+
+    if (diff.externalTicker !== undefined) {
+        const isDelete = !diff.externalTicker;
+        dataState.push({
+            key: `%s%s__assetId2external__${assetId}`,
+            value: isDelete ? null : diff.externalTicker,
+            type: isDelete ? null : 'string'
+        });
+    }
+
+    if (dataState.length === 0) {
+        return null;
+    }
+
+    return dataState.length ? {
+        type: 12,
+        data: {
+            sender,
+            senderPublicKey,
+            data: dataState,
+            fee: {
+                tokens: '0.01',
+                assetId: 'WAVES',
+            },
+            chainId: byte.charCodeAt(0)
+        },
+    } : null;
+};
+
+export const setFactoryAssetMinAmountDataTransaction = (diff, globalSettings, assetId) => {
+
+    if (diff.minAmount === undefined) {
+        return null;
+    }
+
+    const hasMinAmount = !!diff.minAmount;
+
+    const dataState = [
+        {key: `%s%s__poolAssetMinAmount__${assetId}`, type: hasMinAmount ? 'integer' : null, value: hasMinAmount ? diff.minAmount : null },
+    ];
+
+    return dataState.length ? {
+        type: 12,
+        data: {
+            sender: factory,
+            senderPublicKey: factoryPublicKey,
+            data: dataState,
+            fee: {
+                tokens: '0.01',
+                assetId: 'WAVES',
+            },
+            chainId: byte.charCodeAt(0)
+        },
+    } : null;
+};
