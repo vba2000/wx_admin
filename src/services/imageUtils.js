@@ -31,3 +31,20 @@ export const getIconFromFileEvent = (event) => {
     };
     return promise;
 };
+
+export function getIconFromBase64(img = '') {
+    try {
+        const splited = img.split(',');
+
+        if (splited.length !== 2) {
+            return img;
+        }
+
+        const b64 = splited[1].trim();
+        return decodeURIComponent(window.atob(b64));
+    } catch (e) {
+
+    }
+
+    return img;
+}

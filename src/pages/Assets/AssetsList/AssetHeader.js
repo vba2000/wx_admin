@@ -14,6 +14,7 @@ export const AssetHeader = ({assetData, ...props}) => {
         asset,
         ticker,
         assetName,
+        externalTicker,
     } = assetData;
 
     const tokens = useMemo(() => {
@@ -45,6 +46,12 @@ export const AssetHeader = ({assetData, ...props}) => {
                     <Row><small className="lab}el label-primary text-nowrap">Min Amount</small></Row>
                     <Row><small className="text-muted">{tokens || 'N/A'}</small></Row>
                 </Col>
+                { externalTicker &&
+                <Col className="my-2">
+                    <Row><small className="lab}el label-primary text-nowrap">External ticker</small></Row>
+                    <Row><small className="text-muted">{externalTicker}</small></Row>
+                </Col>
+                }
                 <Col className="my-2">
                     <Container style={{width: '150px'}}>
                         <Row><small className="lab}el label-primary text-nowrap">Labels</small></Row>
