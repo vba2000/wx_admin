@@ -7,6 +7,7 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
     const [ showDelisted, setShowDelisted ] = useState(false);
     const [ showHaveTicker, setShowHaveTicker ] = useState(false);
     const [ showWithMinAmount, setShowWithMinAmount] = useState(false);
+    const [ showWithExternal, setShowWithExternal] = useState(false);
     const [ byAsset, setByAsset ] = useState('');
     const clearSearch = useCallback(() => setByAsset(''), [setByAsset]);
     const setSearchFilter = useCallback((e) => {
@@ -27,6 +28,10 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
                return false;
            }
 
+            if (showWithExternal && !item.externalTicker) {
+                return false;
+            }
+
            if (showWithMinAmount && !item.assetsMinAmount) {
                return false;
            }
@@ -38,7 +43,7 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
            return true;
         });
         setFilteredList(newList);
-    }, [list, showDelisted, showHaveTicker, showWithMinAmount, byAsset, setFilteredList]);
+    }, [list, showDelisted, showHaveTicker, showWithMinAmount, showWithExternal, byAsset, setFilteredList]);
 
 
     return <Container>
@@ -70,6 +75,12 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
                 <Form.Text muted>Has Min amount</Form.Text>
                 <FormGroup>
                     <OnOffSm value={showWithMinAmount} onChange={setShowWithMinAmount}/>
+                </FormGroup>
+            </Col>
+            <Col md={2} xs={6}>
+                <Form.Text muted>Has external rate</Form.Text>
+                <FormGroup>
+                    <OnOffSm value={showWithExternal} onChange={setShowWithExternal}/>
                 </FormGroup>
             </Col>
             <Col md={2} xs={6}>

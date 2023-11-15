@@ -44,6 +44,7 @@ export const SaveAssetDataModal = ({diff, asset, isShow, hideModal, ...params}) 
 
             const signedTx = await signTransactionsPackage(txs);
             const res = await broadcastAndWaitTxs(signedTx, setProgress);
+
             if ('logo' in diff) {
                 asset.logo = diff.logo;
             }
@@ -61,11 +62,13 @@ export const SaveAssetDataModal = ({diff, asset, isShow, hideModal, ...params}) 
             }
             setProgress(0);
             hideModal();
+            return res;
         } catch (e) {
             const error = await e;
             setProgress(0);
+            return error;
         }
-    }, [diff, globalPoolsSettings, asset.id, signTransactionsPackage]);
+    }, [diff, globalPoolsSettings, asset, hideModal, signTransactionsPackage]);
 
     if (!isShow) {
         return;
