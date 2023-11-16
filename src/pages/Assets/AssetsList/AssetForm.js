@@ -5,9 +5,10 @@ import {InputWithDecimals} from "../../../components/InputWithDecimals";
 import {convertSvgString} from "../../../services";
 import {SaveAssetDataModal} from "./SaveAssetDataModal";
 import {getIconFromBase64} from "../../../services/imageUtils";
+import {LabelsForm} from "./LabelsForm";
 
 
-export const AssetForm = ({asset, ...props}) => {
+export const AssetForm = ({asset, labels, ...props}) => {
 
     const [img, setImg] = useState({
         value: asset.logo ? `data:image/svg+xml;base64, ${convertSvgString(asset.logo)}` : '',
@@ -17,6 +18,7 @@ export const AssetForm = ({asset, ...props}) => {
 
 
     const [ticker, setTicker] = useState(asset.ticker);
+    const [assetLabels, setAssetLabels] = useState(asset.labels || '');
 
     const onTickerChange = useCallback((e) => {
         setTicker(e.target.value);
@@ -66,6 +68,13 @@ export const AssetForm = ({asset, ...props}) => {
             delete diff.ticker;
         }
 
+        if ((asset.labels || null) !== (assetLabels || null)) {
+            diff.labels = assetLabels;
+            hasDiff = true;
+        } else {
+            delete diff.labels;
+        }
+
         if ((asset.externalTicker || null) !== (externalTicker || null)) {
             diff.externalTicker = externalTicker;
             hasDiff = true;
@@ -74,7 +83,7 @@ export const AssetForm = ({asset, ...props}) => {
         }
 
         return { diff, hasDiff };
-    }, [asset.logo, asset.ticker, asset.assetsMinAmount, asset.externalTicker, externalTicker, ticker, minAmount, img]);
+    }, [asset.logo, asset.ticker, asset.assetsMinAmount, asset.externalTicker, externalTicker, ticker, minAmount, img, asset.labels, assetLabels]);
 
     const [showSaveModal, setShowSaveModal] = useState(false);
     const hideModal = useCallback(() => setShowSaveModal(false), []);
@@ -111,6 +120,10 @@ export const AssetForm = ({asset, ...props}) => {
                     </InputGroup>
                 </FormGroup>
             </Col>
+        </Row>
+        <hr/>
+        <Row>
+            <LabelsForm labels={asset.labels || ''} allLabels={labels} onChange={setAssetLabels}/>
         </Row>
         <hr/>
         <Row>

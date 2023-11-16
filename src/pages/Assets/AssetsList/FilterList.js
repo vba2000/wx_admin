@@ -17,7 +17,6 @@ export const FilterList = ({ list, setFilteredList, ...props }) => {
 
     useEffect(() => {
         const newList = list.filter(item => {
-
             let ticker = item.ticker || item.assetName || item.asset.name;
 
            if (showDelisted && !!item.labels) {
