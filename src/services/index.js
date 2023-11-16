@@ -40,6 +40,15 @@ export const checkNodeNetworkByte = async (user) => {
     }
 };
 
+export const checkId = (id) => {
+    try {
+        const bytes = libs.crypto.base58Decode(id);
+        return bytes.length === 32;
+    } catch (e) {
+        return false;
+    }
+}
+
 export const checkAddress = (user) => {
     if (!user) {
         return null;
@@ -82,6 +91,24 @@ export const checkPublicKey = (pk) => {
     }
 }
 
+export const fetchAssets =  async (ids) => {
+    const idsToFetch = Array.isArray(ids) ? ids : [ids];
+    const fetchedAssets = await fetch(`${node}assets/details`, {
+        body: JSON.stringify({ids: idsToFetch}),
+        method: 'POST',
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    }).then(res => res.json());
+
+    if (Array.isArray(ids)) {
+        return fetchedAssets;
+    } else {
+        return fetchedAssets[0];
+    }
+};
+
 const getAdminsData = async (managerContract) => {
     const dataState = await getDataState(managerContract);
 
@@ -122,20 +149,13 @@ const getAdminsData = async (managerContract) => {
 
     return adminData;
 }
-const getAssets = async (ids) => {
+
+export const getAssets = async (ids) => {
     const idsToFetch = ids.filter((id) => !assetsStore[id]);
     while (true) {
         const ids = idsToFetch.splice(0, 100);
         if (ids.length) {
-            const fetchedAssets = await fetch(`${node}assets/details`, {
-                body: JSON.stringify({ids}),
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                }
-            }).then(res => res.json());
-
+            const fetchedAssets = await fetchAssets(ids);
             fetchedAssets.forEach((asset) => {
                 assetsStore[asset.assetId] = asset;
             });

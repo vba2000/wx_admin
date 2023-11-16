@@ -64,7 +64,7 @@ export const useDataForRoot = () => {
     }, [setNetwork, setPools, setHasData, setAssets, setGlobalsPoolsSettings, setHasError, setLoadingData]);
 
     const api = useMemo(() => {
-        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool, network, changeNetwork };
+        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool, network, changeNetwork, setAssets };
     }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, hasData, updatePool, network, changeNetwork])
     return api;
 };
