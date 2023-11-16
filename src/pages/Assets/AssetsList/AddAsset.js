@@ -33,7 +33,7 @@ export const AddAsset = ({ ...props }) => {
             <Col sm={6} md={6} lg={6} xl={4} xxl={4} className="">
                 <FormGroup>
                     <InputGroup size={"sm"}>
-                        <InputGroup.Text id="assetFind"><small>Add by assetId</small></InputGroup.Text>
+                        <InputGroup.Text id="assetFind"><small>Add to list by Id</small></InputGroup.Text>
                         <Form.Control
                             size={"sm"}
                             placeholder="Asset Id"
@@ -45,5 +45,6 @@ export const AddAsset = ({ ...props }) => {
                     </InputGroup>
                 </FormGroup>
             </Col>
+        {props.children}
         </Row>;
 };

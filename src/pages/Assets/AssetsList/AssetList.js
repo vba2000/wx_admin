@@ -33,11 +33,12 @@ export const AssetList = (params) => {
     const [listToRender, setListToRender] = useState([]);
 
     return <Col className="m-2" hidden={isLoadingData || hasError}>
-        <Row><
-            FilterList list={assetList} setFilteredList={setListToRender}><DefaultMinAmount
-            poolAssetDefaultMinAmount={globalPoolsSettings.poolAssetDefaultMinAmount} isAdmin={isManger}/></FilterList>
+        <AddAsset isAdmin={isManger}>
+            <DefaultMinAmount poolAssetDefaultMinAmount={globalPoolsSettings.poolAssetDefaultMinAmount} isAdmin={isManger}/>
+        </AddAsset>
+        <Row>
+            <FilterList list={assetList} setFilteredList={setListToRender}></FilterList>
         </Row>
-        <AddAsset/>
         <Accordion activeKey={!isManger ? "no" : undefined}>
             {
                 listToRender.map(asset =>
