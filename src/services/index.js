@@ -221,9 +221,9 @@ export const getPoolsData = async () => {
     const {poolsData, globalSettings} = parsePools(dataState);
     const assetsState = await getDataState(globalSettings.assetStore);
     const adminData = await getAdminsData(globalSettings.managerContract);
-    const assetStore = parseAssetStore(assetsState);
+    const { assetGlobalSettings, assetStoreData} = parseAssetStore(assetsState);
 
-    const missTickers = Object.entries(assetStore).reduce((acc, [id]) => {
+    const missTickers = Object.entries(assetStoreData).reduce((acc, [id]) => {
         acc.push(id);
         return acc;
     }, []);
@@ -231,12 +231,12 @@ export const getPoolsData = async () => {
     const assets = await getAssets(missTickers);
 
     assets.forEach((asset) => {
-        assetStore[asset.assetId] = assetStore[asset.assetId] || {};
-        assetStore[asset.assetId].asset = asset;
-        assetStore[asset.assetId].id = asset.assetId;
+        assetStoreData[asset.assetId] = assetStoreData[asset.assetId] || {};
+        assetStoreData[asset.assetId].asset = asset;
+        assetStoreData[asset.assetId].id = asset.assetId;
     })
 
-    return {poolsData, assetStore, globalSettings: {...globalSettings, ...adminData}};
+    return {poolsData, assetStore: assetStoreData, globalSettings: {...globalSettings, ...adminData, assetGlobalSettings }};
 };
 
 export const statusToText = (status) => {
@@ -256,12 +256,16 @@ export const statusToText = (status) => {
 const parseAssetStore = (assetStore) => {
     const assetStoreData = {};
     const notUsed = [];
+    const assetGlobalSettings = {};
     assetStore.forEach(({key, value}) => {
         const splited = key.split('__');
         switch (true) {
             case key.includes('%s%s__assetDescription'):
                 assetStoreData[splited[2]] = assetStoreData[splited[2]] || {};
                 assetStoreData[splited[2]].description = value;
+                break;
+            case key === '%s__labels':
+                assetGlobalSettings.labels = value.split('__');
                 break;
             case key.includes('%s%s__labels__'):
                 assetStoreData[splited[2]] = assetStoreData[splited[2]] || {};
@@ -296,7 +300,7 @@ const parseAssetStore = (assetStore) => {
 
     console.log('Asset', notUsed);
 
-    return assetStoreData;
+    return { assetStoreData, assetGlobalSettings };
 }
 
 const parsePools = (factoryDataState) => {
@@ -633,6 +637,15 @@ export const setAssetStorageDataTransaction = (diff, globalSettings, assetId) =>
         dataState.push({
             key: `%s%s__assetId2external__${assetId}`,
             value: isDelete ? null : diff.externalTicker,
+            type: isDelete ? null : 'string'
+        });
+    }
+
+    if (diff.labels !== undefined) {
+        const isDelete = !diff.labels;
+        dataState.push({
+            key: `%s%s__labels__${assetId}`,
+            value: isDelete ? null : diff.labels,
             type: isDelete ? null : 'string'
         });
     }

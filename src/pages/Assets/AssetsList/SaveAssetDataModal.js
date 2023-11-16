@@ -36,6 +36,10 @@ export const SaveAssetDataModal = ({diff, asset, isShow, hideModal, ...params}) 
             toSave.externalTicker = diff.externalTicker;
         }
 
+        if ('labels' in diff) {
+            toSave.labels = diff.labels;
+        }
+
         try {
             const txs = [
                 setAssetStorageDataTransaction(toSave, globalPoolsSettings, asset.id),
@@ -60,6 +64,11 @@ export const SaveAssetDataModal = ({diff, asset, isShow, hideModal, ...params}) 
             if ('externalTicker' in diff) {
                 asset.externalTicker = diff.externalTicker;
             }
+
+            if ('labels' in diff) {
+                asset.labels = diff.labels;
+            }
+
             setProgress(0);
             hideModal();
             return res;
@@ -85,7 +94,7 @@ export const SaveAssetDataModal = ({diff, asset, isShow, hideModal, ...params}) 
         </Modal.Header>
         <Modal.Body>
             <Container>
-                <Row>
+                <Row hidden={diff.logo === undefined}>
                     <Col md={2}>
                         <IconLogo svgString={diff.logo} width={32}/>
                     </Col>
@@ -100,6 +109,10 @@ export const SaveAssetDataModal = ({diff, asset, isShow, hideModal, ...params}) 
                     <Col md={1}>{diff.externalTicker === undefined ? 'No' : diff.externalTicker}</Col>
                     <Col md={2}><small>Min amount</small></Col>
                     <Col md={4}>{diff.assetsMinAmount === undefined ? 'No' : diff.assetsMinAmount}</Col>
+                </Row>
+                <Row hidden={diff.labels === undefined}>
+                    <Col md={2}><small>Labels</small></Col>
+                    <Col>{diff.labels}</Col>
                 </Row>
             </Container>
         </Modal.Body>

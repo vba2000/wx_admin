@@ -40,7 +40,7 @@ export const AssetList = (params) => {
                     (<Accordion.Item eventKey={asset.asset.assetId} key={asset.asset.assetId} className="m-0">
                         <AssetHeader assetData={asset}/>
                         <Accordion.Body className={"bg-light"}>
-                            <AssetForm asset={asset}/>
+                            <AssetForm asset={asset} labels={globalPoolsSettings.assetGlobalSettings.labels}/>
                         </Accordion.Body>
                     </Accordion.Item>))
             }
