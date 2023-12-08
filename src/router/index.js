@@ -9,7 +9,7 @@ import Stats from "../pages/Stats";
 
 const router = createBrowserRouter([
     {
-        path: "/",
+        path: "/wx_admin",
         element: <MainPage/>,
         children: [
             {
