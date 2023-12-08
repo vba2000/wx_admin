@@ -29,7 +29,7 @@ export const AddAsset = ({ ...props }) => {
     }, [toAdd, setAssets]);
 
 
-    return <Row className={'mb-2 pb-3 border-1 border-dark-subtle border-bottom'}>
+    return <Row className={'mb-2 pb-3  pt-3 border-dark-subtle  border-bottom border-top'}>
             <Col sm={6} md={6} lg={6} xl={4} xxl={4} className="">
                 <FormGroup>
                     <InputGroup size={"sm"}>
