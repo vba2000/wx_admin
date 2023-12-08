@@ -25,6 +25,11 @@ function Navigation() {
                                     Assets
                                 </Link>
                             </Nav.Link>
+                            <Nav.Link>
+                                <Link to={'stats'}>
+                                    Pool stats
+                                </Link>
+                            </Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
 

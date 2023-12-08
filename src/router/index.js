@@ -5,6 +5,7 @@ import {
 import MainPage from '../pages/MainPage';
 import Pools from "../pages/Pools/Pools";
 import Assets from "../pages/Assets/Assets";
+import Stats from "../pages/Stats";
 
 const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
             {
                 path: "assets",
                 element: <Assets />,
+            },
+            {
+                path: "stats",
+                element: <Stats />,
             },
         ]
     }

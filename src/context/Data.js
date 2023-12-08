@@ -6,6 +6,7 @@ import {broadcast, getPoolsData, setMainnet, setTestnet} from "../services";
 export const useDataForRoot = () => {
 
     const [pools, setPools] = useState({});
+    const [poolStats, setPoolStats] = useState({});
     const [globalPoolsSettings, setGlobalsPoolsSettings] = useState({});
     const [assets, setAssets] = useState({});
     const [isLoadingData, setLoadingData] = useState(false);
@@ -20,12 +21,12 @@ export const useDataForRoot = () => {
 
         const fetchData = async () => {
             try {
-                const {globalSettings, poolsData, assetStore} = await getPoolsData();
+                const {globalSettings, poolsData, assetStore, poolsStats: poolStatsData} = await getPoolsData();
                 if (stopFetched) {
                     setLoadingData(false);
                     return null;
                 }
-
+                setPoolStats(poolStatsData);
                 setPools(poolsData);
                 setAssets(assetStore);
                 setGlobalsPoolsSettings(globalSettings);
@@ -64,8 +65,8 @@ export const useDataForRoot = () => {
     }, [setNetwork, setPools, setHasData, setAssets, setGlobalsPoolsSettings, setHasError, setLoadingData]);
 
     const api = useMemo(() => {
-        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool, network, changeNetwork, setAssets };
-    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, hasData, updatePool, network, changeNetwork])
+        return { fetchData, pools, globalPoolsSettings, assets, isLoadingData, hasError, broadcast, hasData, updatePool, network, changeNetwork, setAssets, poolStats };
+    }, [pools, globalPoolsSettings, assets, isLoadingData, hasError, fetchData, hasData, updatePool, network, changeNetwork, poolStats])
     return api;
 };
 

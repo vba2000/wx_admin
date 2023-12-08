@@ -1,12 +1,14 @@
 import {libs} from '@waves/waves-transactions';
 
 const MAINNET = {
+    poolStats: 'https://wx.network/api/v1/liquidity_pools/stats?status__not_in%5B%5D=4',
     node: 'https://nodes.waves.exchange/',
     factory: '3PCuHsTU58WKhCqotbcSwABvdPzqqVAbbTv',
     factoryPublicKey: 'HBWgh7DKPyzCnEXKJAJ5dKQ3jmPtMhGD78tt6jRdkV61',
     byte: 'W'
 };
 const TESTNET = {
+    poolStats: 'https://testnet.wx.network/api/v1/liquidity_pools/stats?status__not_in%5B%5D=4',
     node: 'https://nodes-testnet.wavesnodes.com/',
     factory: '3MsMP2pb2p8MDd6Rxb7XEXqqwEhE8ATfyai',
     factoryPublicKey: '2JEaBjtjvMoNGKZmL9QxYefa1VkMJM3vMW8rNvTs9R2H',
@@ -14,7 +16,7 @@ const TESTNET = {
 };
 
 export let net = 'mainnet';
-let {node, factory, byte, factoryPublicKey} = MAINNET;
+let {node, factory, byte, factoryPublicKey, poolStats} = MAINNET;
 
 export const setTestnet = () => {
     node = TESTNET.node;
@@ -22,6 +24,7 @@ export const setTestnet = () => {
     factoryPublicKey = TESTNET.factoryPublicKey;
     byte = TESTNET.byte;
     net = 'testnet';
+    poolStats = TESTNET.poolStats;
 };
 
 export const setMainnet = () => {
@@ -29,6 +32,7 @@ export const setMainnet = () => {
     factory = MAINNET.factory;
     byte = MAINNET.byte;
     net = 'mainnet';
+    poolStats = MAINNET.poolStats;
 };
 
 export const checkNodeNetworkByte = async (user) => {
@@ -73,6 +77,11 @@ export const checkAddress = (user) => {
     return null;
 };
 
+export const getStatsData = async () => {
+    const url = `${poolStats}`;
+    const data = await fetch(url).then(res => res.json());
+    return data;
+};
 
 const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
 
@@ -108,6 +117,8 @@ export const fetchAssets =  async (ids) => {
         return fetchedAssets[0];
     }
 };
+
+
 
 const getAdminsData = async (managerContract) => {
     const dataState = await getDataState(managerContract);
@@ -243,6 +254,8 @@ export const getPoolsData = async () => {
     const adminData = await getAdminsData(globalSettings.managerContract);
     const { assetGlobalSettings, assetStoreData} = parseAssetStore(assetsState);
 
+    const poolsStats = await getStatsData();
+
     const missTickers = Object.entries(assetStoreData).reduce((acc, [id]) => {
         acc.push(id);
         return acc;
@@ -256,7 +269,7 @@ export const getPoolsData = async () => {
         assetStoreData[asset.assetId].id = asset.assetId;
     })
 
-    return {poolsData, assetStore: assetStoreData, globalSettings: {...globalSettings, ...adminData, assetGlobalSettings }};
+    return {poolsData, assetStore: assetStoreData, globalSettings: {...globalSettings, ...adminData, assetGlobalSettings }, poolsStats};
 };
 
 export const statusToText = (status) => {
