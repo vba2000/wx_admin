@@ -45,7 +45,7 @@ export const StatsItem = ({ data, assets, setSelected, hideLowLiq, showBotStoppe
         const priceDecimals = priceAsset.asset.decimals;
         const amountMinAmount = (assetsMinAmount[amount_asset_id] ? assetsMinAmount[amount_asset_id] : poolAssetDefaultMinAmount) / 10 ** amountDecimals;
         const priceMinAmount = (assetsMinAmount[price_asset_id] ? assetsMinAmount[price_asset_id] : poolAssetDefaultMinAmount) / 10 ** priceDecimals ;
-        return !(amountMinAmount <= Number(amount_asset_balance) && priceMinAmount <= Number(price_asset_balance));
+        return !(amountMinAmount / 2 <= Number(amount_asset_balance) && priceMinAmount / 2 <= Number(price_asset_balance));
     }, [pool_status, amountAsset, priceAsset, assetsMinAmount, poolAssetDefaultMinAmount,
         amount_asset_balance, amount_asset_id, price_asset_balance, price_asset_id]);
 
