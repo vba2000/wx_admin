@@ -14,7 +14,7 @@ import Invoke from "../pages/txs/Ivoke";
 
 const router = createHashRouter([
     {
-        path: "/wx_admin",
+        path: "/",
         Component: MainPage,
         children: [
             {
