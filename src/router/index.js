@@ -15,11 +15,11 @@ import Invoke from "../pages/txs/Ivoke";
 const router = createHashRouter([
     {
         path: "/",
-        element: <MainPage/>,
+        Component: MainPage,
         children: [
             {
                 path: "/",
-                element: Pools,
+                Component: Pools,
                 default: true,
             },
             {
