@@ -6,6 +6,7 @@ class WavesKeeper {
     keeperState = null;
     user = 'Guest';
     isLogin = false;
+    userData = {};
 
     async login(isGuest = false) {
         if (isGuest) {
@@ -16,6 +17,7 @@ class WavesKeeper {
         }
         try {
             const state = await window.KeeperWallet.publicState();
+            this.userData = state.account;
             this.user = state.account.address;
             await checkNodeNetworkByte(this.user);
             this.keeperState = state;
@@ -41,12 +43,14 @@ export const useUserForRoot = () => {
 
     const [keeper] = useState(new WavesKeeper());
     const [user, setUser] = useState(keeper.user);
+    const [userData, setUserData] = useState(keeper.userData);
     const [txLoading, setTxLoading] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
     const [hasError, setError] = useState(null);
     const login = useCallback((data) => {
         return keeper.login(data).then(() => {
             setUser(keeper.user);
+            setUserData(keeper.userData);
             setIsLogin(true);
         });
     }, [keeper]);
@@ -73,7 +77,7 @@ export const useUserForRoot = () => {
     }, [keeper]);
 
     return {
-        user, logout, login, signTransactionsPackage, txLoading, isLogin, hasError
+        user, logout, login, signTransactionsPackage, txLoading, isLogin, hasError, userData
     };
 };
 
