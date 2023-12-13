@@ -18,6 +18,11 @@ const router = createHashRouter([
         Component: MainPage,
         children: [
             {
+                path: "/",
+                Component: Pools,
+                default: true,
+            },
+            {
                 path: "pools",
                 Component: Pools,
                 default: true,
