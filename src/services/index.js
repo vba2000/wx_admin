@@ -83,7 +83,7 @@ export const getStatsData = async () => {
     return data;
 };
 
-const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
+export const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
 
 const assetsStore = {'WAVES': { assetId: 'WAVES',  ticker: 'WAVES', name: 'WAVES', decimals: 8}};
 const getDataState = async (address) => {

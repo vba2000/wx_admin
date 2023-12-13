@@ -30,6 +30,11 @@ function Navigation() {
                                     Pool stats
                                 </Link>
                             </Nav.Link>
+                            <Nav.Link>
+                                <Link to={'transactions'}>
+                                    Txs
+                                </Link>
+                            </Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
 
