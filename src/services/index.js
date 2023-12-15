@@ -86,15 +86,34 @@ export const getStatsData = async () => {
 export const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
 
 const assetsStore = {'WAVES': { assetId: 'WAVES',  ticker: 'WAVES', name: 'WAVES', decimals: 8}};
+
 const getDataState = async (address) => {
     const url = `${node}addresses/data/${address}`;
     const data = await fetch(url).then(res => res.json());
     return data;
 };
 
+export const getBalanceByAddressAndAssetId = async (address, assetId) => {
+    const url = `${node}assets/balance/${address}/${assetId}`;
+    const data = await fetch(url).then(res => res.json());
+    return data;
+};
+
+export const checkTransactionId = (id) => {
+    try {
+        const bytes = libs.crypto.base58Decode(id);
+        const length = bytes.length;
+        return length === 32;
+    } catch (e) {
+        return false;
+    }
+}
+
 export const checkPublicKey = (pk) => {
     try {
-        return libs.crypto.base58Decode(pk).length === 32;
+        const bytes = libs.crypto.base58Decode(pk);
+        const length = bytes.length;
+        return length === 32;
     } catch (e) {
         return false;
     }
