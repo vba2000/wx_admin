@@ -13,7 +13,7 @@ export const AddressInput = ({ fieldName, value, onChange, disabled, ...props })
         setAddress(address);
         onChange(isValid ? address : '');
         setError(!isValid);
-    }, [value, onChange]);
+    }, [onChange]);
 
     useEffect(() => {
         if (address !== value ) {
@@ -26,8 +26,8 @@ export const AddressInput = ({ fieldName, value, onChange, disabled, ...props })
     return <InputGroup {...props}>
         <Button  variant="secondary" style={{ width: '160px' }}  disabled={true}>{fieldName} Address</Button>
         <Form.Control
-            placeholder="base58 public key"
-            aria-label="base58 public key"
+            placeholder="base58 address"
+            aria-label="base58 address"
             aria-describedby="basic-addon1"
             value={address}
             onChange={onSetAddress}

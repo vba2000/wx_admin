@@ -9,11 +9,13 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
     const [timestamp, setTimestamp] = useState(Date.now());
     const [senderPublicKey, setSenderPublicKey] = useState('');
     const [sender, setSender] = useState('');
+    const [recipient, setRecipient] = useState('');
     const [txFee, setTxFee] = useState(data.fee || 0);
     const [txFeeAsset, setTxFeeAsset] = useState(data.feeAsset);
     const [txAmountAsset, setTxAmountAsset] = useState(null);
     const [txAsset, setTxAsset] = useState(null);
     const [txAmount, setTxAmount] = useState(null);
+    const [txAttachment, setTxAttachment] = useState('');
     const [isSending, setIsSending] = useState(null);
     const [error, setError] = useState(null);
 
@@ -34,6 +36,7 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
     const txData = useMemo(() => {
         return {
             ...data,
+            recipient,
             txAsset,
             txAmountAsset,
             txFeeAsset,
@@ -41,28 +44,33 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
             sender,
             senderPublicKey,
             txAmount,
-            timestamp
+            timestamp,
+            txAttachment
         };
-    }, [data, txFee, txFeeAsset, sender, senderPublicKey, timestamp, txAsset, txAmountAsset, txAmount]);
+    }, [data, txFee, txFeeAsset, sender, senderPublicKey, timestamp, txAsset, txAmountAsset, txAmount, recipient, txAttachment]);
 
     const txToSign = useMemo(() => {
+        const preparedTx = {
+            senderPublicKey: txData.senderPublicKey,
+            sender: txData.sender,
+            recipient: txData.recipient,
+            assetId: txData.txAsset ? txData.txAsset.id : null,
+            fee: txData.txFee,
+            feeAssetId: txData.txFeeAsset ? txData.txFeeAsset.id : null,
+            amount: txData.txAmount,
+            attachment: txData.txAttachment,
+            ...data,
+        };
+
         try {
-            const {burn} = wt;
-            const txForSign = burn({
-                senderPublicKey,
-                sender,
-                assetId: txAsset ? txAsset.id : null,
-                fee: txFee,
-                feeAssetId: txFeeAsset ? txFeeAsset.id : null,
-                amount: txAmount,
-                ...data,
-            });
+            const { signTx } = wt;
+            const txForSign = signTx(preparedTx);
             return txForSign;
         } catch (e) {
-
+            console.log(e);
         }
-        return null;
-    }, [txData]);
+        return preparedTx;
+    }, [txData, data]);
 
 
     const onSubmitTx = useCallback(async () => {
@@ -77,31 +85,24 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
             setError(e);
         }
         setIsSending(false);
-    }, [txToSign]);
+    }, [txToSign, signTransactionsPackage]);
+
+    const actions = useMemo(() => ({
+        onSubmitTx,
+        setTimestamp,
+        setSenderPublicKey: setSenderPK,
+        setTxAsset,
+        setTxFee,
+        setRecipient,
+        setTxFeeAsset,
+        setTxAmountAsset,
+        setTxAmount,
+        setTxAttachment,
+    }), [onSubmitTx, setSenderPK]);
 
     return {
-        tx: txToSign || {
-            senderPublicKey,
-            sender,
-            timestamp,
-            amountAssetId: txAmountAsset ? txAmountAsset.id : null,
-            assetId: txAsset ? txAsset.id : null,
-            fee: txFee,
-            feeAssetId: txFeeAsset ? txFeeAsset.id : null,
-            amount: txAmount,
-            ...data,
-        },
-        txToSign,
-        actions: {
-            onSubmitTx,
-            setTimestamp,
-            setSenderPublicKey: setSenderPK,
-            setTxAsset,
-            setTxFee,
-            setTxFeeAsset,
-            setTxAmountAsset,
-            setTxAmount
-        },
+        tx: txToSign,
+        actions,
         txData,
         isSending,
         error

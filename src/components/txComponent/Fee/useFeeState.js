@@ -4,13 +4,15 @@ import {useCallback, useMemo, useState} from "react";
 const FEES = {
     6:  (tx, minSponsoredAssetFee = 1) => {
             return 0.001 * 10 ** 8;
+    },
+    4:  (tx, minSponsoredAssetFee = 1) => {
+        return 0.001 * 10 ** 8;
     }
 };
 
 const getFee = (tx, feeAsset) => {
     const isWaves = feeAsset && feeAsset.id === 'WAVES';
-
-    if (!feeAsset || !isWaves && !feeAsset.asset.minSponsoredAssetFee || !FEES[tx.type]) {
+    if (!feeAsset || (!isWaves && !feeAsset.asset.minSponsoredAssetFee) || !FEES[tx.type]) {
         return null;
     }
 
@@ -44,6 +46,6 @@ export const useFeeState = ({ tx, feeAsset, onChange  }) => {
         onChange(state.fee);
 
         return state;
-    }, [tx, feeAsset, fee, onChange]);
+    }, [tx, feeAsset, fee, onChange, resetFee]);
 
 }
