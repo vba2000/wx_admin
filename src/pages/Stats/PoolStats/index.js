@@ -82,6 +82,15 @@ export const PoolStats = ({ ...props }) => {
             }
             </Table>
         </Row>
+        <Row className={'bg-secondary'}>
+            <Col md={2}>Pool Name</Col>
+            <Col md={1}>Liquidity</Col>
+            <Col md={1}>APY</Col>
+            <Col md={3}>Address</Col>
+            <Col>Amount</Col>
+            <Col>Price</Col>
+            <Col >Select</Col>
+        </Row>
         {
             statsItems.map((item) => <StatsItem key={item.address} data={item} assets={assets} hideLowLiq={hideLowLiq} showBotStopped={showBotStopped} globalSettings={globalPoolsSettings} showBotRunning={showBotRunning}/>)
         }
