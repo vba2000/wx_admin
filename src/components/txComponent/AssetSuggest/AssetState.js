@@ -100,7 +100,7 @@ export const AssetState = (assets) => {
             onSuggest,
             suggest
         };
-    }, [assets, onSuggest, suggest, isLoading, filteredAsset]);
+    }, [onSuggest, suggest, isLoading, filteredAsset, clearSuggest]);
 
     return state;
 };
