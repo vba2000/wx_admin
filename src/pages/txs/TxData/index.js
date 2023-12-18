@@ -1,5 +1,5 @@
 import {useCallback, useMemo, useState} from "react";
-import {broadcastAndWaitTxs, pubKeyToAddress} from "../../../services";
+import {broadcastAndWaitTxs, getByte, pubKeyToAddress} from "../../../services";
 import * as wt from '@waves/waves-transactions';
 import {txToKeeper} from "../../../services/keeper";
 
@@ -54,6 +54,7 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
     const txToSign = useMemo(() => {
         const preparedTx = {
             ...data,
+            chainId: getByte(),
             senderPublicKey: txData.senderPublicKey,
             sender: txData.sender,
             recipient: txData.recipient,
