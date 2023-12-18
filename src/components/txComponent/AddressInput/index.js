@@ -10,14 +10,12 @@ export const AddressInput = ({ fieldName, value, onChange, disabled, ...props })
     const onSetAddress = useCallback((event) => {
         const address = event.target.value;
         const isValid = !checkAddress(address);
-        setAddress(address);
         onChange(isValid ? address : '');
         setError(!isValid);
     }, [onChange]);
 
     useEffect(() => {
         if (address !== value ) {
-            setAddress(value);
             const isValid = !checkAddress(value);
             setError(!(!value || isValid));
         }
@@ -29,7 +27,7 @@ export const AddressInput = ({ fieldName, value, onChange, disabled, ...props })
             placeholder="base58 address"
             aria-label="base58 address"
             aria-describedby="basic-addon1"
-            value={address}
+            value={value}
             onChange={onSetAddress}
             disabled={disabled}
         />

@@ -4,11 +4,23 @@ import * as wt from '@waves/waves-transactions';
 import {txToKeeper} from "../../../services/keeper";
 
 
+const getAddress = (pubKey) => {
+    if (pubKey) {
+        try {
+           const sender = pubKeyToAddress(pubKey);
+           return sender;
+        } catch (e) {
+            return '';
+        }
+    } else {
+        return '';
+    }
+}
+
 export const useTxData = (data = {}, assets, signTransactionsPackage) => {
 
     const [timestamp, setTimestamp] = useState(data.timestamp || Date.now());
-    const [senderPublicKey, setSenderPublicKey] = useState('');
-    const [sender, setSender] = useState(data.sender || '');
+    const [senderPublicKey, setSenderPublicKey] = useState(data.senderPublicKey || '');
     const [recipient, setRecipient] = useState(data.recipient || '');
     const [txFee, setTxFee] = useState(data.fee || 0);
     const [txFeeAsset, setTxFeeAsset] = useState(data.feeAsset);
@@ -22,17 +34,9 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
 
     const setSenderPK = useCallback((pubKey) => {
         setSenderPublicKey(pubKey);
-        if (pubKey) {
-            try {
-                const sender = pubKeyToAddress(pubKey);
-                setSender(sender);
-            } catch (e) {
-                setSender('');
-            }
-        } else {
-            setSender('');
-        }
     }, []);
+
+    const sender = getAddress(senderPublicKey);
 
     const txData = useMemo(() => {
         return {
@@ -75,7 +79,7 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
                         value = Number(value);
                         break;
                     case 'boolean':
-                        value = value === 'true' ? true : false;
+                        value = value === 'true';
                         break;
                     case null:
                         value = null;
