@@ -102,6 +102,8 @@ export const getStatsData = async () => {
 
 export const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
 
+export const getByte = () => byte.charCodeAt(0);
+
 const assetsStore = {'WAVES': { assetId: 'WAVES',  ticker: 'WAVES', name: 'WAVES', decimals: 8}};
 
 const getDataState = async (address) => {
