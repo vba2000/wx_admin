@@ -1,4 +1,5 @@
 import {useCallback, useMemo, useState} from "react";
+import {getMinFeeForDataTx} from "../../../services";
 
 
 const FEES = {
@@ -7,6 +8,9 @@ const FEES = {
     },
     4:  (tx, minSponsoredAssetFee = 1) => {
         return 0.001 * 10 ** 8;
+    },
+    12: (tx, minSponsoredAssetFee = 1) => {
+        return getMinFeeForDataTx(tx);
     }
 };
 
@@ -31,7 +35,7 @@ const getFee = (tx, feeAsset) => {
 
 export const useFeeState = ({ tx, feeAsset, onChange  }) => {
 
-    const [fee, setFee] = useState(null);
+    const [fee, setFee] = useState(tx.fee || 0);
 
     const resetFee = useCallback(() => setFee(null), []);
 

@@ -6,16 +6,17 @@ import {txToKeeper} from "../../../services/keeper";
 
 export const useTxData = (data = {}, assets, signTransactionsPackage) => {
 
-    const [timestamp, setTimestamp] = useState(Date.now());
+    const [timestamp, setTimestamp] = useState(data.timestamp || Date.now());
     const [senderPublicKey, setSenderPublicKey] = useState('');
-    const [sender, setSender] = useState('');
-    const [recipient, setRecipient] = useState('');
+    const [sender, setSender] = useState(data.sender || '');
+    const [recipient, setRecipient] = useState(data.recipient || '');
     const [txFee, setTxFee] = useState(data.fee || 0);
     const [txFeeAsset, setTxFeeAsset] = useState(data.feeAsset);
     const [txAmountAsset, setTxAmountAsset] = useState(null);
     const [txAsset, setTxAsset] = useState(null);
-    const [txAmount, setTxAmount] = useState(null);
-    const [txAttachment, setTxAttachment] = useState('');
+    const [txAmount, setTxAmount] = useState(data.amount || null);
+    const [txAttachment, setTxAttachment] = useState(data.attachment || '');
+    const [txDataEntries, setTxDataEntries] = useState(data.data || []);
     const [isSending, setIsSending] = useState(null);
     const [error, setError] = useState(null);
 
@@ -23,8 +24,8 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
         setSenderPublicKey(pubKey);
         if (pubKey) {
             try {
-                const address = pubKeyToAddress(pubKey);
-                setSender(address);
+                const sender = pubKeyToAddress(pubKey);
+                setSender(sender);
             } catch (e) {
                 setSender('');
             }
@@ -45,12 +46,14 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
             senderPublicKey,
             txAmount,
             timestamp,
-            txAttachment
+            txAttachment,
+            txDataEntries
         };
-    }, [data, txFee, txFeeAsset, sender, senderPublicKey, timestamp, txAsset, txAmountAsset, txAmount, recipient, txAttachment]);
+    }, [data, txFee, txFeeAsset, sender, senderPublicKey, timestamp, txAsset, txAmountAsset, txAmount, recipient, txAttachment, txDataEntries]);
 
     const txToSign = useMemo(() => {
         const preparedTx = {
+            ...data,
             senderPublicKey: txData.senderPublicKey,
             sender: txData.sender,
             recipient: txData.recipient,
@@ -59,18 +62,37 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
             feeAssetId: txData.txFeeAsset ? txData.txFeeAsset.id : null,
             amount: txData.txAmount,
             attachment: txData.txAttachment,
-            ...data,
+            data: txData.txDataEntries,
         };
+
+        if (txData.txDataEntries && txData.txDataEntries.some(i => !(i.keyIsValid && i.valueIsValid))){
+            return preparedTx;
+        } else if (txData.txDataEntries) {
+            preparedTx.data = txData.txDataEntries.map(({ key, value, type }) => {
+                switch (type) {
+                    case 'integer':
+                        value = Number(value);
+                        break;
+                    case 'boolean':
+                        value = value === 'true' ? true : false;
+                        break;
+                    case null:
+                        value = null;
+                        break;
+                    default:
+                }
+                return { key, type, value };
+            });
+        }
 
         try {
             const { signTx } = wt;
-            const txForSign = signTx(preparedTx);
-            return txForSign;
+            return signTx(preparedTx);
         } catch (e) {
             console.log(e);
         }
         return preparedTx;
-    }, [txData, data]);
+    }, [txData]);
 
 
     const onSubmitTx = useCallback(async () => {
@@ -98,6 +120,7 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
         setTxAmountAsset,
         setTxAmount,
         setTxAttachment,
+        setTxDataEntries,
     }), [onSubmitTx, setSenderPK]);
 
     return {
