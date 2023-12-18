@@ -1,4 +1,4 @@
-import {libs} from '@waves/waves-transactions';
+import {libs, makeTxBytes} from '@waves/waves-transactions';
 
 const MAINNET = {
     poolStats: 'https://wx.network/api/v1/liquidity_pools/stats?status__not_in%5B%5D=4',
@@ -49,6 +49,23 @@ export const checkId = (id) => {
         const bytes = libs.crypto.base58Decode(id);
         return bytes.length === 32;
     } catch (e) {
+        return false;
+    }
+}
+
+export const isBase64 = (value, maxBytes = Infinity) => {
+    if (value.indexOf('base64:') !== 0) {
+        return false;
+    }
+    const str = value.trim().replace('base64:', '');
+
+    try {
+        const bytes = libs.crypto.base64Decode(str);
+        if (bytes.length > maxBytes) {
+            return false;
+        }
+        return libs.crypto.base64Encode(bytes) === str;
+    } catch (err) {
         return false;
     }
 }
@@ -746,4 +763,13 @@ export const setFactoryAssetMinAmountDataTransaction = (diff, globalSettings, as
             chainId: byte.charCodeAt(0)
         },
     } : null;
+};
+
+
+export const getMinFeeForDataTx = (tx) => {
+    try {
+        return Math.ceil(makeTxBytes(tx).length / 1000) * 400000 + 100000;
+    } catch (e) {
+        return 100000;
+    }
 };

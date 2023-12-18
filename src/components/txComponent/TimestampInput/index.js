@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {InputGroup, Form, Button} from "react-bootstrap";
 
 
@@ -14,18 +14,11 @@ export const TimestampInput = ({ value, onChange, ...props }) => {
 
     const onSetTimestamp = useCallback((event) => {
         const timestamp = event.target.value;
-        const isValid = isValidTimestamp(timestamp);
         setTimestamp(timestamp);
         if (Number(timestamp) !== value) {
             onChange(Number(timestamp));
         }
     }, [value, onChange]);
-
-    useEffect(() => {
-        if (timestamp !== value) {
-            setTimestamp(value);
-        }
-    }, [value]);
 
     const setNow = useCallback(() => {
         const time = Date.now();
@@ -34,8 +27,7 @@ export const TimestampInput = ({ value, onChange, ...props }) => {
     }, [onChange]);
 
     const isValid = useMemo(() => {
-        const date = new Date(timestamp);
-        return Number.isSafeInteger(date.valueOf()) && timestamp > 0;
+        return isValidTimestamp(timestamp);
     }, [timestamp]);
 
     const validMsg = useMemo(() => {
