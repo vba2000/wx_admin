@@ -21,7 +21,8 @@ const Transfer = ({ ...props }) => {
         {
             type: 4,
             version: 2,
-            feeAsset: assets['WAVES']
+            feeAsset: assets['WAVES'],
+            timestamp: Date.now()
         },
         assets,
         signTransactionsPackage
