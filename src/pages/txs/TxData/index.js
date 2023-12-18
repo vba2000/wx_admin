@@ -68,6 +68,7 @@ export const useTxData = (data = {}, assets, signTransactionsPackage) => {
             amount: txData.txAmount,
             attachment: txData.txAttachment,
             data: txData.txDataEntries,
+            timestamp: txData.timestamp
         };
 
         if (txData.txDataEntries && txData.txDataEntries.some(i => !(i.keyIsValid && i.valueIsValid))){
