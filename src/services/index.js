@@ -768,7 +768,7 @@ export const setFactoryAssetMinAmountDataTransaction = (diff, globalSettings, as
 
 export const getMinFeeForDataTx = (tx) => {
     try {
-        return Math.ceil(makeTxBytes(tx).length / 1000) * 400000 + 100000;
+        return Math.floor(makeTxBytes(tx).length / 1000) * 400000 + 100000;
     } catch (e) {
         return 100000;
     }
