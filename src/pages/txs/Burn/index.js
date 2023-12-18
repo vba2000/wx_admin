@@ -20,7 +20,8 @@ const Burn = ({ ...props }) => {
         {
             type: 6,
             version: 2,
-            feeAsset: assets['WAVES']
+            feeAsset: assets['WAVES'],
+            timestamp: Date.now()
         },
         assets,
         signTransactionsPackage
