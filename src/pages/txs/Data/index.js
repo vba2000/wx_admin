@@ -40,7 +40,7 @@ const Data = ({ ...props }) => {
     }
 
     return <Container hidden={isLoadingData} className={'bg-body-secondary p-2 m-4'}>
-        <Row className={'m-1'}><Col className={'bg-warning border rounded m-2 p-2'}>Data (tx type 6)</Col></Row>
+        <Row className={'m-1'}><Col className={'bg-warning border rounded m-2 p-2'}>Data (tx type 12)</Col></Row>
         <Row className={'m-1'}><Col><PublicKeyInput onChange={actions.setSenderPublicKey} value={tx.senderPublicKey} defaultValue={userData.publicKey}/></Col></Row>
         <Row className={'m-1'}><Col><AddressInput fieldName={'Sender'} disabled={true} value={tx.sender}/></Col></Row>
         <Row className={'m-1'}><Col><TimestampInput onChange={actions.setTimestamp} value={tx.timestamp}/></Col></Row>
