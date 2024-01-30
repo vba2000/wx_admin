@@ -19,19 +19,25 @@ const selectClassName = (status) => {
     }
 }
 
-export const PoolForm = ({pool, isManager, ...props}) => {
+export const PoolForm = ({pool, assets, isManager, ...props}) => {
     if (isManager) {
-        return <PoolFormMangaer pool={pool}/>;
+        return <PoolFormMangaer pool={pool} assets={assets}/>;
     }
-    return <PoolInfo pool={pool}/>;
+    return <PoolInfo pool={pool} assets={assets}/>;
 };
 
-export const PoolInfo = ({pool, ...props}) => {
+export const PoolInfo = ({pool, assets, ...props}) => {
     const { address, LPAssetId, amountAssetId, priceAssetId, type } = pool;
+    const amountName = assets[pool.amountAssetId]?.ticker || assets[pool.amountAssetId]?.assetName || assets[pool.amountAssetId]?.asset.name;
+    const priceName = assets[pool.priceAssetId]?.ticker || assets[pool.priceAssetId]?.assetName  || assets[pool.priceAssetId]?.asset.name;
+    const poolName = `${amountName || 'no name'}/${priceName || 'no name'}`;
 
     return <Container>
         <Row>
             <Col md={2}><Form.Text muted>Pool type</Form.Text></Col><Col><small>{type === 'STBLPOOL' ? 'Stable' : 'Uni'}</small></Col>
+        </Row>
+        <Row>
+            <Col md={2}><Form.Text muted>Pool name</Form.Text></Col><Col><small>{poolName}</small></Col>
         </Row>
         <Row>
             <Col md={2}><Form.Text muted>Pool address</Form.Text></Col><Col><small>{address}</small></Col>

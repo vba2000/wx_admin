@@ -20,7 +20,7 @@ export const PoolList = (params) => {
                 (<Accordion.Item eventKey={pool.address} key={pool.address} className="m-0">
                     <PoolHeader poolData={pool} assets={assets}/>
                     <Accordion.Body className={"bg-light"}>
-                        <PoolForm pool={pool} isManager={isManger}/>
+                        <PoolForm pool={pool} isManager={isManger} assets={assets}/>
                     </Accordion.Body>
                 </Accordion.Item>))
             }
