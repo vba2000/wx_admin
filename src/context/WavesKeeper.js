@@ -13,6 +13,11 @@ class WavesKeeper {
             this.user = "Guest";
             this.isLogin = true;
             this.keeperState = {};
+            window.$chatwoot.setUser(`<unique-identifier-key-of-the-user>`, {
+                name: this.user, // Name of the user
+                email: "", // Email of the user
+                identifier_hash: Math.random().toString()  // HMAC value, which is generated using inbox identifier (obtained from inbox settings ) and unique-identifier-key that you supply for the contact.
+            });
             return;
         }
         try {
@@ -22,6 +27,10 @@ class WavesKeeper {
             await checkNodeNetworkByte(this.user);
             this.keeperState = state;
             this.isLogin = true;
+            window.$chatwoot.setUser(this.user, {
+                name: state.account.name, // Name of the user
+                email: "", // Email of the user
+            });
         } catch (e) {
             throw(new Error(e));
         }
