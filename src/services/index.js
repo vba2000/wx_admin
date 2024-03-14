@@ -354,7 +354,7 @@ const parseAssetStore = (assetStore) => {
             case key.includes('ticker_<'):
                 const assetId = /ticker_<(.+)>/.exec(key)[1];
                 assetStoreData[assetId] = assetStoreData[assetId] || {};
-                assetStoreData[assetId].ticker = value;
+                assetStoreData[assetId].tickerOld = value;
                 break;
             case key.includes('%s%s__assetName'):
                 assetStoreData[splited[2]] = assetStoreData[splited[2]] || {};
@@ -697,9 +697,14 @@ export const setAssetStorageDataTransaction = (diff, globalSettings, assetId) =>
     if (diff.ticker !== undefined) {
         const isDelete = !diff.ticker;
         dataState.push({
-            key: `ticker_<${assetId}>`,
+            key: `%s%s__assetId2ticker__${assetId}`,
             value: isDelete ? null : diff.ticker,
             type: isDelete ? null : 'string'
+        });
+        dataState.push({
+            key: `ticker_<${assetId}>`,
+            value:  null,
+            type: null
         });
     }
 
