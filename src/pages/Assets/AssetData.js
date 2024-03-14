@@ -45,7 +45,7 @@ const genDataStateToSave = (diff, assetId) => {
 
     if ('ticker' in diff) {
         dataState.push({
-            key: `ticker_<${assetId}>`,
+            key: `%s%s__assetId2ticker__${assetId}`,
             value: diff.ticker || null,
             type: diff.ticker ? 'string' : null
         });

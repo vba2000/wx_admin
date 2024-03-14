@@ -13,6 +13,7 @@ export const AssetHeader = ({assetData, ...props}) => {
         labels,
         asset,
         ticker,
+        tickerOld,
         assetName,
         externalTicker,
     } = assetData;
@@ -36,7 +37,7 @@ export const AssetHeader = ({assetData, ...props}) => {
                 <Col className="align-middle my-2"><IconLogo width={32} height={32} svgString={logo} onClick={onClick}/></Col>
                 <Col className="my-2">
                     <Row><small className="lab}el label-primary text-nowrap">Ticker</small></Row>
-                    <Row><small className="text-muted">{ticker}</small></Row>
+                    <Row><small className="text-muted">{ticker} {tickerOld ? <span className="bg-warning">OLD:{tickerOld}</span> : null}</small></Row>
                 </Col>
                 <Col className="my-2">
                     <Row><small className="lab}el label-primary text-nowrap">Name</small></Row>
