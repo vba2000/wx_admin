@@ -27,10 +27,10 @@ class WavesKeeper {
             await checkNodeNetworkByte(this.user);
             this.keeperState = state;
             this.isLogin = true;
-            window.$chatwoot.setUser(this.user, {
-                name: state.account.name, // Name of the user
-                email: "", // Email of the user
-            });
+            // window.$chatwoot.setUser(this.user, {
+            //     name: state.account.name, // Name of the user
+            //     email: "", // Email of the user
+            // });
         } catch (e) {
             throw(new Error(e));
         }
