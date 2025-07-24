@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useState} from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
     activateNewManager,
     adminVoteForNewManager,
@@ -82,5 +82,5 @@ export const useVoteData = (user, globalSettings, closeModal, signTransactionsPa
 
     }, [setErrorVote, setIsLoading, isManager, globalSettings.managerContract, signTransactionsPackage]);
 
-    return {setErrorVote, isAdmin, isManager, setAdmins, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, activateManager, errorPk, errorVote, iAmNewManager};
+    return { setErrorVote, isAdmin, isManager, setAdmins, hasNewVote, isLoading, newAdmin, onChangePublicKey, vote, activateManager, errorPk, errorVote, iAmNewManager };
 }
