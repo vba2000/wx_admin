@@ -1,4 +1,4 @@
-import {libs, makeTxBytes} from '@waves/waves-transactions';
+import { libs, makeTxBytes } from '@waves/waves-transactions';
 
 const MAINNET = {
     poolStats: 'https://wx.network/api/v1/liquidity_pools/stats?status__not_in%5B%5D=4',
@@ -16,7 +16,7 @@ const TESTNET = {
 };
 
 export let net = 'mainnet';
-let {node, factory, byte, factoryPublicKey, poolStats} = MAINNET;
+let { node, factory, byte, factoryPublicKey, poolStats } = MAINNET;
 
 export const setTestnet = () => {
     node = TESTNET.node;
@@ -88,7 +88,7 @@ export const checkAddress = (user) => {
             return `Incorrect user ${user}!`;
         }
     } catch (e) {
-        return  'Incorrect base58';
+        return 'Incorrect base58';
     }
 
     return null;
@@ -100,11 +100,11 @@ export const getStatsData = async () => {
     return data;
 };
 
-export const pubKeyToAddress = (publicKey) => libs.crypto.address({publicKey}, byte);
+export const pubKeyToAddress = (publicKey) => libs.crypto.address({ publicKey }, byte);
 
 export const getByte = () => byte.charCodeAt(0);
 
-const assetsStore = {'WAVES': { assetId: 'WAVES',  ticker: 'WAVES', name: 'WAVES', decimals: 8}};
+const assetsStore = { 'WAVES': { assetId: 'WAVES', ticker: 'WAVES', name: 'WAVES', decimals: 8 } };
 
 const getDataState = async (address) => {
     const url = `${node}addresses/data/${address}`;
@@ -138,10 +138,10 @@ export const checkPublicKey = (pk) => {
     }
 }
 
-export const fetchAssets =  async (ids) => {
+export const fetchAssets = async (ids) => {
     const idsToFetch = Array.isArray(ids) ? ids : [ids];
     const fetchedAssets = await fetch(`${node}assets/details`, {
-        body: JSON.stringify({ids: idsToFetch}),
+        body: JSON.stringify({ ids: idsToFetch }),
         method: 'POST',
         headers: {
             'accept': 'application/json',
@@ -161,7 +161,7 @@ export const fetchAssets =  async (ids) => {
 const getAdminsData = async (managerContract) => {
     const dataState = await getDataState(managerContract);
 
-    const adminData = dataState.reduce((acc, {key, value}) => {
+    const adminData = dataState.reduce((acc, { key, value }) => {
 
         switch (true) {
             case key.includes('%s__adminAddressList'):
@@ -180,11 +180,11 @@ const getAdminsData = async (managerContract) => {
                 acc.pendingManager = pubKeyToAddress(value);
                 break;
             case key.includes('%s%s%s__removeAdmin__'):
-                const [,,admin] = key.split('__');
+                const [, , admin] = key.split('__');
                 acc.adminsToDelete[admin] = (acc.adminsToDelete[admin] || 0) + 1;
                 break;
             case key.includes('%s%s%s__addAdmin__'):
-                const [,,admin2] = key.split('__');
+                const [, , admin2] = key.split('__');
                 acc.adminsToAdd[admin2] = (acc.adminsToAdd[admin2] || 0) + 1;
                 break;
             default:
@@ -253,7 +253,7 @@ const createPoll = (func, times = 10, delta = 1000) => {
     }
 
     tryExec();
-    return {resultPromise: promise, stop: () => stop = true};
+    return { resultPromise: promise, stop: () => stop = true };
 };
 
 export const broadcastAndWaitTxs = (txs, progress = (p) => p) => {
@@ -265,10 +265,10 @@ export const broadcastAndWaitTxs = (txs, progress = (p) => p) => {
         }
         const sendTx = ((tx) => () => broadcast(tx))(tx);
         return acc.then(async () => {
-            const {resultPromise: txOnNode} = createPoll(sendTx);
+            const { resultPromise: txOnNode } = createPoll(sendTx);
             const tx = await txOnNode;
             progress((currentIndex + 0.5) / txs.length * 100);
-            const {resultPromise} = createPoll(() => getTransactionStatus(tx.id));
+            const { resultPromise } = createPoll(() => getTransactionStatus(tx.id));
             await resultPromise;
             progress((currentIndex + 1) / txs.length * 100);
         });
@@ -283,14 +283,14 @@ export const broadcast = async (tx) => fetch(`${node}transactions/broadcast`, {
         'accept': 'application/json',
         'Content-Type': 'application/json',
     }
-}).then(res => res.status === 200 ? res.json(): Promise.reject(res.json()));
+}).then(res => res.status === 200 ? res.json() : Promise.reject(res.json()));
 
 export const getPoolsData = async () => {
     const dataState = await getDataState(factory);
-    const {poolsData, globalSettings} = parsePools(dataState);
+    const { poolsData, globalSettings } = parsePools(dataState);
     const assetsState = await getDataState(globalSettings.assetStore);
     const adminData = await getAdminsData(globalSettings.managerContract);
-    const { assetGlobalSettings, assetStoreData} = parseAssetStore(assetsState);
+    const { assetGlobalSettings, assetStoreData } = parseAssetStore(assetsState);
 
     const poolsStats = await getStatsData();
 
@@ -307,7 +307,7 @@ export const getPoolsData = async () => {
         assetStoreData[asset.assetId].id = asset.assetId;
     })
 
-    return {poolsData, assetStore: assetStoreData, globalSettings: {...globalSettings, ...adminData, assetGlobalSettings }, poolsStats};
+    return { poolsData, assetStore: assetStoreData, globalSettings: { ...globalSettings, ...adminData, assetGlobalSettings }, poolsStats };
 };
 
 export const statusToText = (status) => {
@@ -328,7 +328,7 @@ const parseAssetStore = (assetStore) => {
     const assetStoreData = {};
     const notUsed = [];
     const assetGlobalSettings = {};
-    assetStore.forEach(({key, value}) => {
+    assetStore.forEach(({ key, value }) => {
         const splited = key.split('__');
         switch (true) {
             case key.includes('%s%s__assetDescription'):
@@ -406,27 +406,27 @@ const parsePools = (factoryDataState) => {
             case key.includes('%s%s__spread__'):
                 const [, , pool1] = key.split('__');
                 poolsConfig[pool1] = poolsConfig[pool1] || {};
-                poolsConfig[pool1] = {...poolsConfig[pool1], spread: value};
+                poolsConfig[pool1] = { ...poolsConfig[pool1], spread: value };
                 break;
             case key.includes('%s%s__outFee__'):
                 const [, , pool2] = key.split('__');
                 poolsConfig[pool2] = poolsConfig[pool2] || {};
-                poolsConfig[pool2] = {...poolsConfig[pool2], outFee: value};
+                poolsConfig[pool2] = { ...poolsConfig[pool2], outFee: value };
                 break;
             case key.includes('%s%s__inFee__'):
                 const [, , pool3] = key.split('__');
                 poolsConfig[pool3] = poolsConfig[pool3] || {};
-                poolsConfig[pool3] = {...poolsConfig[pool3], inFee: value};
+                poolsConfig[pool3] = { ...poolsConfig[pool3], inFee: value };
                 break;
             case key.includes('%s%s__skipOrderValidation__'):
                 const [, , pool5] = key.split('__');
                 poolsConfig[pool5] = poolsConfig[pool5] || {};
-                poolsConfig[pool5] = {...poolsConfig[pool5], skipValidation: value};
+                poolsConfig[pool5] = { ...poolsConfig[pool5], skipValidation: value };
                 break;
             case key.includes('poolWeight'):
                 const [, , pool6] = key.split('__');
                 poolsConfig[pool6] = poolsConfig[pool6] || {};
-                poolsConfig[pool6] = {...poolsConfig[pool6], poolWeight: value};
+                poolsConfig[pool6] = { ...poolsConfig[pool6], poolWeight: value };
                 break;
             case key.includes('%s%s__swapFee__'):
                 const [, , pool4] = key.split('__');
@@ -435,12 +435,12 @@ const parsePools = (factoryDataState) => {
                 const poolSwapFee = parseInt(swapFee1, 10);
                 const matcherSwapFee = parseInt(swapFee2, 10)
                 const swapFee = poolSwapFee + matcherSwapFee;
-                poolsConfig[pool4] = {...poolsConfig[pool4], matcherSwapFee, poolSwapFee, swapFee};
+                poolsConfig[pool4] = { ...poolsConfig[pool4], matcherSwapFee, poolSwapFee, swapFee };
                 break;
             case key.includes('__config'):
                 const conf = parseConfig(value);
                 poolsConfig[conf.address] = poolsConfig[conf.address] || {};
-                poolsConfig[conf.address] = {...conf, ...poolsConfig[conf.address]};
+                poolsConfig[conf.address] = { ...conf, ...poolsConfig[conf.address] };
                 break;
             case key.includes('%s%s%s__wxEmission__'):
                 const [, , assAm, assPr] = key.split('__');
@@ -466,19 +466,19 @@ const parsePools = (factoryDataState) => {
 
             case key.includes('%s%s__ordersNumber__'):
                 const [, , pool7] = key.split('__');
-                poolsConfig[pool7] = {...poolsConfig[pool7], ordersNumber: value || 20 };
+                poolsConfig[pool7] = { ...poolsConfig[pool7], ordersNumber: value || 20 };
                 break;
             case key.includes('%s%s__amp__') && !key.includes('%s%s%s__amp__'):
                 const [, , pool8] = key.split('__');
-                poolsConfig[pool8] = {...poolsConfig[pool8], amp: value };
+                poolsConfig[pool8] = { ...poolsConfig[pool8], amp: value };
                 break
             case key.includes('%s%s__stepSize__'):
                 const [, , pool9] = key.split('__');
-                poolsConfig[pool9] = {...poolsConfig[pool9], stepSize: value };
+                poolsConfig[pool9] = { ...poolsConfig[pool9], stepSize: value };
                 break;
             case key.includes('%s%s__profitIncrease__'):
                 const [, , pool10] = key.split('__');
-                poolsConfig[pool10] = {...poolsConfig[pool10], profitIncrease: value };
+                poolsConfig[pool10] = { ...poolsConfig[pool10], profitIncrease: value };
                 break;
 
 
@@ -525,7 +525,7 @@ const parsePools = (factoryDataState) => {
     }, {});
     console.log('Factory', notUsed);
 
-    return {poolsData, globalSettings};
+    return { poolsData, globalSettings };
 }
 
 
@@ -587,24 +587,24 @@ export const createKeeperInvokeForKeeper = (dApp, func, args, payment) => {
 
 export const setPoolStatusTx = (poolAddress, status) => {
     return createKeeperInvokeForKeeper(factory, 'managePool', [
-        {type: 'string', value: poolAddress},
-        {type: 'integer', value: status}
+        { type: 'string', value: poolAddress },
+        { type: 'integer', value: status }
     ], []);
 };
 export const setPoolWxEmissionsTx = (amountAssetId, priceAssetId, hasWxEmission) => {
     return createKeeperInvokeForKeeper(factory,
         hasWxEmission ? 'setWxEmissionPoolLabel' : 'deleteWxEmissionPoolLabel', [
-            {type: 'string', value: amountAssetId},
-            {type: 'string', value: priceAssetId}
-        ], []);
+        { type: 'string', value: amountAssetId },
+        { type: 'string', value: priceAssetId }
+    ], []);
 };
 
 export const adminVoteForNewManager = (managerPk, managerContract) => {
-    return createKeeperInvokeForKeeper(managerContract, 'voteForNewManager' , [{ value: managerPk, type: 'string' }]);
+    return createKeeperInvokeForKeeper(managerContract, 'voteForNewManager', [{ value: managerPk, type: 'string' }]);
 };
 
 export const activateNewManager = (managerContract) => {
-    return createKeeperInvokeForKeeper(managerContract, 'activateManager' , []);
+    return createKeeperInvokeForKeeper(managerContract, 'activateManager', []);
 };
 
 export const editAdmins = (managerContract, newAdmin, toDelete) => {
@@ -621,9 +621,18 @@ export const editAdmins = (managerContract, newAdmin, toDelete) => {
     return txs;
 };
 
+export const disablePoolsTx = (factoryContract, isDisbale) => {
+    const txs = [];
+    txs.push(createKeeperInvokeForKeeper(factoryContract, 'globalShutdown', [{
+        "type": "boolean",
+        "value": !!isDisbale
+    }]));
+    return txs;
+};
+
 export const setFactoryDataTransaction = (pool, globalSettings, data) => {
 
-    let {poolSwapFee, matcherSwapFee} = data || {};
+    let { poolSwapFee, matcherSwapFee } = data || {};
     let swapFeeValue = undefined;
     if (poolSwapFee !== null && matcherSwapFee === null) {
         matcherSwapFee = globalSettings.matcherSwapFee;
@@ -639,7 +648,7 @@ export const setFactoryDataTransaction = (pool, globalSettings, data) => {
     }
 
     const dataState = [
-        {key: `%s%s__skipOrderValidation__${pool.address}`, type: 'boolean', value: data.skipValidation},
+        { key: `%s%s__skipOrderValidation__${pool.address}`, type: 'boolean', value: data.skipValidation },
         {
             key: `%d%d%s__${pool.IAmountAssetId}__${pool.IPriceAssetId}__oneTokenOperationsDisabled`,
             type: 'boolean',
@@ -650,10 +659,10 @@ export const setFactoryDataTransaction = (pool, globalSettings, data) => {
             type: 'boolean',
             value: data.swapDisable
         },
-        {key: `%s%s__spread__${pool.address}`, type: 'integer', value: data.spread},
-        {key: `%s%s__inFee__${pool.address}`, type: 'integer', value: data.inFee},
-        {key: `%s%s__outFee__${pool.address}`, type: 'integer', value: data.outFee},
-        {key: `%s%s__swapFee__${pool.address}`, type: swapFeeValue ? 'string' : null, value: swapFeeValue},
+        { key: `%s%s__spread__${pool.address}`, type: 'integer', value: data.spread },
+        { key: `%s%s__inFee__${pool.address}`, type: 'integer', value: data.inFee },
+        { key: `%s%s__outFee__${pool.address}`, type: 'integer', value: data.outFee },
+        { key: `%s%s__swapFee__${pool.address}`, type: swapFeeValue ? 'string' : null, value: swapFeeValue },
         { key: `%s%s__amp__${pool.address}`, type: 'integer', value: data.amp || undefined },
         { key: `%s%s__profitIncrease__${pool.address}`, type: 'integer', value: data.profitIncrease || undefined },
         { key: `%s%s__stepSize__${pool.address}`, type: 'integer', value: data.stepSize || undefined },
@@ -703,7 +712,7 @@ export const setAssetStorageDataTransaction = (diff, globalSettings, assetId) =>
         });
         dataState.push({
             key: `ticker_<${assetId}>`,
-            value:  null,
+            value: null,
             type: null
         });
     }
@@ -754,7 +763,7 @@ export const setFactoryAssetMinAmountDataTransaction = (diff, globalSettings, as
     const hasMinAmount = !!diff.minAmount;
 
     const dataState = [
-        {key: `%s%s__poolAssetMinAmount__${assetId}`, type: hasMinAmount ? 'integer' : null, value: hasMinAmount ? diff.minAmount : null },
+        { key: `%s%s__poolAssetMinAmount__${assetId}`, type: hasMinAmount ? 'integer' : null, value: hasMinAmount ? diff.minAmount : null },
     ];
 
     return dataState.length ? {

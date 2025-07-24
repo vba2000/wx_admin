@@ -1,26 +1,49 @@
-import {Row, Col, Button, Accordion} from "react-bootstrap";
-import {useCallback, useContext, useMemo} from "react";
-import {DataContext} from "../../../context/Data";
-import {BoolStatCom} from "../../../components/BoolStatCom";
-import {StringStatCom} from "../../../components/StringStatCom";
-import {UserContext} from "../../../context/WavesKeeper";
-import {GeneralSettingsForm} from "./GeneralSettingsForm";
-import {AdminVoting} from "../../../components/AdminVoting";
+import { Row, Col, Button, Accordion } from "react-bootstrap";
+import { useCallback, useContext, useMemo } from "react";
+import { DataContext } from "../../../context/Data";
+import { BoolStatCom } from "../../../components/BoolStatCom";
+import { StringStatCom } from "../../../components/StringStatCom";
+import { UserContext } from "../../../context/WavesKeeper";
+import { GeneralSettingsForm } from "./GeneralSettingsForm";
+import { AdminVoting } from "../../../components/AdminVoting";
+import { disablePoolsTx, broadcastAndWaitTxs } from "../../../services";
 
 
-export const GeneralSettings = ({...params}) => {
+export const GeneralSettings = ({ ...params }) => {
 
-    const {user, signTransactionsPackage} = useContext(UserContext);
-    const {fetchData, globalPoolsSettings, isLoadingData, hasError, hasData} = useContext(DataContext);
-    const {inFee, outFee, swapFee, spread} = globalPoolsSettings;
+    const { user, signTransactionsPackage } = useContext(UserContext);
+    const { fetchData, globalPoolsSettings, isLoadingData, hasError, hasData } = useContext(DataContext);
+    const { inFee, outFee, swapFee, spread } = globalPoolsSettings;
     const isManger = useMemo(() => user === globalPoolsSettings.manager, [user, globalPoolsSettings.manager]);
     const isAdmin = useMemo(() => (globalPoolsSettings.admins || []).includes(user), [user, globalPoolsSettings.admins]);
-    const {oneTokenDisable, shutdown} = globalPoolsSettings;
+    const { oneTokenDisable, shutdown } = globalPoolsSettings;
     const onUpdate = useCallback((e) => {
         e.stopPropagation();
         e.preventDefault();
         fetchData();
     }, [fetchData]);
+
+    const onDisable = useCallback((e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (!isManger && !isAdmin) {
+            return;
+        }
+
+        if (shutdown && !isAdmin) {
+            return;
+        }
+
+        const factoryContract = globalPoolsSettings.factoryContract;
+        signTransactionsPackage(disablePoolsTx(factoryContract, !shutdown)).then((txs) => {
+            if (!txs || !txs.length) {
+                return;
+            }
+            return broadcastAndWaitTxs(txs).then(() => {
+                onUpdate();
+            });
+        });
+    }, [isManger, isAdmin, globalPoolsSettings, shutdown, signTransactionsPackage, onUpdate]);
 
     if (isLoadingData || hasError || !hasData) {
         return null;
@@ -33,26 +56,26 @@ export const GeneralSettings = ({...params}) => {
                     <Col xxl={1} md={2} sm={4}>
                         <h5>Main settings</h5>
                     </Col>
-                    <BoolStatCom xxl={1} md={2} sm={3} value={!shutdown} valueName="Pools"
-                                 title="Stop all pools operation"/>
+                    <BoolStatCom xxl={1} md={2} sm={3} style={{ border: `solid 1px ${shutdown ? "red" : "green"} `, borderRadius: "5px", paddingTop: "2px" }} value={!shutdown} valueName="Pools"
+                        title="Stop all pools operation" onClick={onDisable} />
                     <BoolStatCom xxl={1} md={2} sm={3} value={!oneTokenDisable} valueName="One tkn"
-                                 title="Stop in and out in one token operation for all pools"/>
-                    <StringStatCom xxl={1} md={2} sm={3} value={`${inFee / 10 ** 6}%`} valueName="Default Fee In"/>
-                    <StringStatCom xxl={1} md={2} sm={3} value={`${outFee / 10 ** 6}%`} valueName="Default Fee Out"/>
-                    <StringStatCom xxl={1} md={2} sm={3} value={`${swapFee / 10 ** 6}%`} valueName="Default Swap fee"/>
-                    <StringStatCom xxl={1} md={2} sm={3} value={`${spread / 10 ** 6}%`} valueName="Default Spread"/>
+                        title="Stop in and out in one token operation for all pools" />
+                    <StringStatCom xxl={1} md={2} sm={3} value={`${inFee / 10 ** 6}%`} valueName="Default Fee In" />
+                    <StringStatCom xxl={1} md={2} sm={3} value={`${outFee / 10 ** 6}%`} valueName="Default Fee Out" />
+                    <StringStatCom xxl={1} md={2} sm={3} value={`${swapFee / 10 ** 6}%`} valueName="Default Swap fee" />
+                    <StringStatCom xxl={1} md={2} sm={3} value={`${spread / 10 ** 6}%`} valueName="Default Spread" />
                     <AdminVoting xxl={1} md={1} sm={1} isAdmin={isManger || isAdmin}
-                                 globalSettings={globalPoolsSettings} user={user}
-                                 signTransactionsPackage={signTransactionsPackage}/>
+                        globalSettings={globalPoolsSettings} user={user}
+                        signTransactionsPackage={signTransactionsPackage} />
                     <Col xxl={1} md={1} sm={1} className={""}>
                         <Button className="bi bi-arrow-clockwise m-1" variant="outline-warning" size="sm"
-                                onClick={onUpdate}
-                                title={"Update data"}/>
+                            onClick={onUpdate}
+                            title={"Update data"} />
                     </Col>
                 </Row>
             </Accordion.Header>
             <Accordion.Body>
-                <GeneralSettingsForm/>
+                <GeneralSettingsForm />
             </Accordion.Body>
         </Accordion.Item>
     </Accordion>
@@ -92,3 +115,4 @@ export const GeneralSettings = ({...params}) => {
     //     <Col>Disable one token: <small className="text-muted">{(oneTokenDisable || false).toString()}</small></Col>
     // </Row>;
 }
+
